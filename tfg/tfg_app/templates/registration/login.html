@@ -1,0 +1,45 @@
+{% load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <title>Login</title>
+</head>
+<body>
+    
+    <div class="caja" style="width: 25%;">
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <h1>BioeBank</h1>
+            <div class="input-box">
+                <i class='bx bxs-user'></i>
+                <a>{{form.username}}</a>
+            </div>
+            <div class="input-box">
+                <i class='bx bxs-lock-alt' ></i>
+                <a>{{form.password}}</a>
+            </div>
+
+            <div class="remember-forgot">
+                <label><input type="checkbox">Recuerdame</label>
+                <a href="#">¿Has olvidado la contraseña?</a>
+            </div>
+
+            <button type="submit" class="button">Login</button>
+            <input type="hidden" name="next" value="{{ next }}">
+            <div class="registrar">
+                <p>¿No tienes cuenta?
+                <a href="#">Registrarse</a></p>
+            </div>
+
+        </form>
+
+    
+
+    </div>
+
+</body>
+</html>

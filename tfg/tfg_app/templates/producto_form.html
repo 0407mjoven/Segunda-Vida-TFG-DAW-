@@ -1,0 +1,8 @@
+<form action="{% url 'product_create' %}" method="post"enctype="multipart/form-data" class="form" style="padding: 0;">
+    {% csrf_token %}
+    <table>
+    {{ form.as_table }}
+    </table>
+    <input type="submit" value="Guardar datos" />
+
+</form>
