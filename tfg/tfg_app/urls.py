@@ -4,10 +4,14 @@ from .views import *
 
 urlpatterns = [
     path('', ProductoListView.as_view(), name='index'),
-    path('accounts/login',LoginView.as_view(), name='login'),
-    path('accounts/logout',LogoutView.as_view(), name='logout'),
-    path('accounts/register',LogoutView.as_view(), name='logout'),
-    path('product/<pk>',ProductoDetailView.as_view(), name='producto_detail'),
-    path('product_create/', ProductoUploadView.as_view(), name='product_create')
+    path('accounts/register',RegisterUserView.as_view(), name= 'register'),
+    path('logout/',logout_view, name= 'logout'),
+    path('product/<pk>',ProductoDetailView.as_view(), name='product_detail'),
+    path('product_create/', ProductoCreateView.as_view(), name='product_create'),
+    path('perfil/<pk>', PerfilDetailView.as_view(), name='perfil'),
+    path('product_update/<pk>',ProductoUpdateView.as_view(), name='product_update'),
+    path('producto/<int:pk>/eliminar/', ProductoDeleteView.as_view(), name='product_delete'),
+
+
 
 ]

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Eliminar Producto</title>
+</head>
+<body>
+    <h1>Eliminar Producto</h1>
+    <p>¿Estás seguro de que deseas eliminar el producto "{{ object.nombre }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Sí, eliminar</button>
+        <a href="{% url 'perfil' pk=object.user_id.user %}">Cancelar</a>  <!-- Cambia esto a la URL de la lista de productos o a donde quieras redirigir al cancelar -->
+    </form>
+</body>
+</html>

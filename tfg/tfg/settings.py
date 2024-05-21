@@ -39,7 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tfg_app',
-    'chat_app'
+    'chat_app',
+    'django_extensions',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -71,8 +73,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'tfg.wsgi.application'
-
-
+APPEND_SLASH=False 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 

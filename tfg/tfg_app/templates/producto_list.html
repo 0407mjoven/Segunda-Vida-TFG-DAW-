@@ -24,7 +24,7 @@
 
         .navbar-vertical {
             position: absolute;
-            top: 10.7%; /* Colocar el navbar vertical justo debajo del header */
+            top: 10.88%; /* Colocar el navbar vertical justo debajo del header */
             left: 0;
             width: 20%; /* Ancho del navbar */
             height: 100%;
@@ -45,245 +45,84 @@
             display: block;
             text-decoration: none;
         }
-
+        .col-3{
+            padding: 0;
+        }
+        .card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .card-img-top {
+            object-fit: cover;
+            height: 200px; /* Puedes ajustar esta altura según tus necesidades */
+        }
+        .card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .card-title, .card-text {
+            margin-bottom: auto;
+        }
+        .btn {
+            margin-top: auto;
+        }
     </style>
 </head>
 <body>
-    <header>
-        <div class="col p-4 bg-success">
-            <h1 class="text-center text-light">Segunda vida</h1>
-        </div>
-    </header>
+    {% include 'header.html' %}
     <nav class="navbar-vertical">
-        <ul>
-            {% for categoria in categorias %}
-            <li><a href="#">{{categoria.nombre}}</a></li>
-            {% endfor %}
-        </ul>
+        <form method="post" style="padding: 15%;">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Filtrar</button>
+        </form>
+        <a href="{% url 'logout' %}" style="color: rgb(0, 0, 0); text-decoration: none;"><i class="bi bi-box-arrow-left">    Cerrar sesión</i></a>
     </nav>
     <main>
         <div class="container-fluid pt-5" style="padding-left: 20%;">
-            <div class="container" >
+    
+            <div class="col" >
+
+                <div class="row"style="left: 60%;" >
+                <h4>Añadidos recientemente</h4>
                 {% for producto in productos %}
-                <div class="row"style="left: 50%;" >
-                    <div class="col">
-                        <div class="card">
-                            <img src="{{producto.imagen.url}}" class="card-img-top" alt="{{producto.nombre}}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{producto.nombre}}</h5>
-                                <p class="card-text">{{producto.descripcion}}</p>
-                                <h4 class="card-text">{{producto.precio}}€</h4>
-                                <p class="card-text"><i class="bi bi-geo-alt-fill"></i> {{producto.user_id.localizacion}}</p>
-
-                                <a href="#" class="btn btn-dark" style="width: 100%;">Ver mas detalles</a>
-                            </div>
-                        </div>  
-                    </div>
-                    <!-- Repite este bloque para cada producto -->
+                
                     <div class="col-3">
                         <div class="card">
                             <img src="{{producto.imagen.url}}" class="card-img-top" alt="{{producto.nombre}}">
                             <div class="card-body">
                                 <h5 class="card-title">{{producto.nombre}}</h5>
-                                <p class="card-text">{{producto.descripcion}}</p>
+                                <p class="card-text" style="max-height:100px; overflow: hidden; text-overflow:ellipsis">{{producto.descripcion}}</p>
                                 <h4 class="card-text">{{producto.precio}}€</h4>
                                 <p class="card-text"><i class="bi bi-geo-alt-fill"></i> {{producto.user_id.localizacion}}</p>
 
-                                <a href="#" class="btn btn-dark" style="width: 100%;">Ver mas detalles</a>
+                                <a href="{% url 'product_detail' pk=producto.pk%}" class="btn btn-dark" style="width: 100%;">Ver mas detalles</a>
                             </div>
                         </div>  
                     </div>
-                    <div class="col-3">
-                        <div class="card">
-                            <img src="{{producto.imagen.url}}" class="card-img-top" alt="{{producto.nombre}}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{producto.nombre}}</h5>
-                                <p class="card-text">{{producto.descripcion}}</p>
-                                <h4 class="card-text">{{producto.precio}}€</h4>
-                                <p class="card-text"><i class="bi bi-geo-alt-fill"></i> {{producto.user_id.localizacion}}</p>
-
-                                <a href="#" class="btn btn-dark" style="width: 100%;">Ver mas detalles</a>
-                            </div>
-                        </div>  
-                    </div>
-                    <div class="col-3">
-                        <div class="card">
-                            <img src="{{producto.imagen.url}}" class="card-img-top" alt="{{producto.nombre}}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{producto.nombre}}</h5>
-                                <p class="card-text">{{producto.descripcion}}</p>
-                                <h4 class="card-text">{{producto.precio}}€</h4>
-                                <p class="card-text"><i class="bi bi-geo-alt-fill"></i> {{producto.user_id.localizacion}}</p>
-
-                                <a href="#" class="btn btn-dark" style="width: 100%;">Ver mas detalles</a>
-                            </div>
-                        </div>  
-                    </div>
-                </div>
-                <div class="row"style="left: 50%;" >
-                    <div class="col">
-                        <div class="card">
-                            <img src="{{producto.imagen.url}}" class="card-img-top" alt="{{producto.nombre}}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{producto.nombre}}</h5>
-                                <p class="card-text">{{producto.descripcion}}</p>
-                                <h4 class="card-text">{{producto.precio}}€</h4>
-                                <p class="card-text"><i class="bi bi-geo-alt-fill"></i> {{producto.user_id.localizacion}}</p>
-
-                                <a href="#" class="btn btn-dark" style="width: 100%;">Ver mas detalles</a>
-                            </div>
-                        </div>  
-                    </div>
-                    <!-- Repite este bloque para cada producto -->
-                    <div class="col-3">
-                        <div class="card">
-                            <img src="{{producto.imagen.url}}" class="card-img-top" alt="{{producto.nombre}}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{producto.nombre}}</h5>
-                                <p class="card-text">{{producto.descripcion}}</p>
-                                <h4 class="card-text">{{producto.precio}}€</h4>
-                                <p class="card-text"><i class="bi bi-geo-alt-fill"></i> {{producto.user_id.localizacion}}</p>
-
-                                <a href="#" class="btn btn-dark" style="width: 100%;">Ver mas detalles</a>
-                            </div>
-                        </div>  
-                    </div>
-                    <div class="col-3">
-                        <div class="card">
-                            <img src="{{producto.imagen.url}}" class="card-img-top" alt="{{producto.nombre}}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{producto.nombre}}</h5>
-                                <p class="card-text">{{producto.descripcion}}</p>
-                                <h4 class="card-text">{{producto.precio}}€</h4>
-                                <p class="card-text"><i class="bi bi-geo-alt-fill"></i> {{producto.user_id.localizacion}}</p>
-
-                                <a href="#" class="btn btn-dark" style="width: 100%;">Ver mas detalles</a>
-                            </div>
-                        </div>  
-                    </div>
-                    <div class="col-3">
-                        <div class="card">
-                            <img src="{{producto.imagen.url}}" class="card-img-top" alt="{{producto.nombre}}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{producto.nombre}}</h5>
-                                <p class="card-text">{{producto.descripcion}}</p>
-                                <h4 class="card-text">{{producto.precio}}€</h4>
-                                <p class="card-text"><i class="bi bi-geo-alt-fill"></i> {{producto.user_id.localizacion}}</p>
-
-                                <a href="#" class="btn btn-dark" style="width: 100%;">Ver mas detalles</a>
-                            </div>
-                        </div>  
-                    </div>
-                </div> <div class="row"style="left: 50%;" >
-                    <div class="col">
-                        <div class="card">
-                            <img src="{{producto.imagen.url}}" class="card-img-top" alt="{{producto.nombre}}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{producto.nombre}}</h5>
-                                <p class="card-text">{{producto.descripcion}}</p>
-                                <h4 class="card-text">{{producto.precio}}€</h4>
-                                <p class="card-text"><i class="bi bi-geo-alt-fill"></i> {{producto.user_id.localizacion}}</p>
-
-                                <a href="#" class="btn btn-dark" style="width: 100%;">Ver mas detalles</a>
-                            </div>
-                        </div>  
-                    </div>
-                    <!-- Repite este bloque para cada producto -->
-                    <div class="col-3">
-                        <div class="card">
-                            <img src="{{producto.imagen.url}}" class="card-img-top" alt="{{producto.nombre}}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{producto.nombre}}</h5>
-                                <p class="card-text">{{producto.descripcion}}</p>
-                                <h4 class="card-text">{{producto.precio}}€</h4>
-                                <p class="card-text"><i class="bi bi-geo-alt-fill"></i> {{producto.user_id.localizacion}}</p>
-
-                                <a href="#" class="btn btn-dark" style="width: 100%;">Ver mas detalles</a>
-                            </div>
-                        </div>  
-                    </div>
-                    <div class="col-3">
-                        <div class="card">
-                            <img src="{{producto.imagen.url}}" class="card-img-top" alt="{{producto.nombre}}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{producto.nombre}}</h5>
-                                <p class="card-text">{{producto.descripcion}}</p>
-                                <h4 class="card-text">{{producto.precio}}€</h4>
-                                <p class="card-text"><i class="bi bi-geo-alt-fill"></i> {{producto.user_id.localizacion}}</p>
-
-                                <a href="#" class="btn btn-dark" style="width: 100%;">Ver mas detalles</a>
-                            </div>
-                        </div>  
-                    </div>
-                    <div class="col-3">
-                        <div class="card">
-                            <img src="{{producto.imagen.url}}" class="card-img-top" alt="{{producto.nombre}}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{producto.nombre}}</h5>
-                                <p class="card-text">{{producto.descripcion}}</p>
-                                <h4 class="card-text">{{producto.precio}}€</h4>
-                                <p class="card-text"><i class="bi bi-geo-alt-fill"></i> {{producto.user_id.localizacion}}</p>
-
-                                <a href="#" class="btn btn-dark" style="width: 100%;">Ver mas detalles</a>
-                            </div>
-                        </div>  
-                    </div>
-                </div> <div class="row"style="left: 50%;" >
-                    <div class="col">
-                        <div class="card">
-                            <img src="{{producto.imagen.url}}" class="card-img-top" alt="{{producto.nombre}}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{producto.nombre}}</h5>
-                                <p class="card-text">{{producto.descripcion}}</p>
-                                <h4 class="card-text">{{producto.precio}}€</h4>
-                                <p class="card-text"><i class="bi bi-geo-alt-fill"></i> {{producto.user_id.localizacion}}</p>
-
-                                <a href="#" class="btn btn-dark" style="width: 100%;">Ver mas detalles</a>
-                            </div>
-                        </div>  
-                    </div>
-                    <!-- Repite este bloque para cada producto -->
-                    <div class="col-3">
-                        <div class="card">
-                            <img src="{{producto.imagen.url}}" class="card-img-top" alt="{{producto.nombre}}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{producto.nombre}}</h5>
-                                <p class="card-text">{{producto.descripcion}}</p>
-                                <h4 class="card-text">{{producto.precio}}€</h4>
-                                <p class="card-text"><i class="bi bi-geo-alt-fill"></i> {{producto.user_id.localizacion}}</p>
-
-                                <a href="#" class="btn btn-dark" style="width: 100%;">Ver mas detalles</a>
-                            </div>
-                        </div>  
-                    </div>
-                    <div class="col-3">
-                        <div class="card">
-                            <img src="{{producto.imagen.url}}" class="card-img-top" alt="{{producto.nombre}}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{producto.nombre}}</h5>
-                                <p class="card-text">{{producto.descripcion}}</p>
-                                <h4 class="card-text">{{producto.precio}}€</h4>
-                                <p class="card-text"><i class="bi bi-geo-alt-fill"></i> {{producto.user_id.localizacion}}</p>
-
-                                <a href="#" class="btn btn-dark" style="width: 100%;">Ver mas detalles</a>
-                            </div>
-                        </div>  
-                    </div>
-                    <div class="col-3">
-                        <div class="card">
-                            <img src="{{producto.imagen.url}}" class="card-img-top" alt="{{producto.nombre}}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{producto.nombre}}</h5>
-                                <p class="card-text">{{producto.descripcion}}</p>
-                                <h4 class="card-text">{{producto.precio}}€</h4>
-                                <p class="card-text"><i class="bi bi-geo-alt-fill"></i> {{producto.user_id.localizacion}}</p>
-
-                                <a href="#" class="btn btn-dark" style="width: 100%;">Ver mas detalles</a>
-                            </div>
-                        </div>  
-                    </div>
-                </div>
                 {% endfor %}
+                <br>
+                <div class="row"style="left: 60%;" >
+                    <h4>Disfruta de la maravillosa informática</h4>
+                    {% for producto in informática %}
+                    
+                    <div class="col-3">
+                        <div class="card">
+                            <img src="{{producto.imagen.url}}" class="card-img-top" alt="{{producto.nombre}}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{producto.nombre}}</h5>
+                                <p class="card-text" style="max-height:100px; overflow: hidden; text-overflow:ellipsis">{{producto.descripcion}}</p>
+                                <h4 class="card-text">{{producto.precio}}€</h4>
+                                <p class="card-text"><i class="bi bi-geo-alt-fill"></i> {{producto.user_id.localizacion}}</p>
+
+                                <a href="{% url 'product_detail' pk=producto.pk%}" class="btn btn-dark" style="width: 100%;">Ver mas detalles</a>
+                            </div>
+                        </div>  
+                    </div>
+                </div>
+            {% endfor %}
             </div>
         </div>
     </main>

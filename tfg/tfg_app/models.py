@@ -5,25 +5,27 @@ from django.contrib.auth.models import User
 class Perfil(models.Model):
     
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    edad = models.IntegerField(blank =True, null=True)
+    fecha_nacimiento = models.DateField(blank =True, null=True)
+    biografía = models.TextField(blank = True, null = True)
     localizacion = models.CharField(blank = True, null = True, max_length=1000)
-    foto = models.ImageField(upload_to="perfil")
-    
-    def comentariosRecibidos(self):
-        return self.comentario_set.all()
-    
-    def productosSubidos(self):
-        return self.producto_set.all()
-    
+    foto = models.ImageField(upload_to="perfil", default='perfil/blankprofile.webp')
+    create_datetime = models.DateTimeField(auto_now_add= True)
+
     def seguidores(self):
-        return  Comentario.objects.filter(seguido = self.pk).count()
+        return self.seguidor.all().count()
     
     def seguidos(self):
-        return  Comentario.objects.filter(seguido = self.pk).count()
+        return self.seguido.all().count()
+    def productos_asociados(self):
+        return self.productos.all()
+    
 class Categoria(models.Model):
     
     id = models.IntegerField(primary_key=True)
     nombre = models.CharField(max_length = 1000)
+    
+    def __str__(self) -> str:
+        return self.nombre
     
 class Producto(models.Model):
     
@@ -31,21 +33,27 @@ class Producto(models.Model):
     nombre = models.CharField(max_length = 100, null = True)
     descripcion = models.TextField(max_length=500)
     precio = models.FloatField()
-    imagen = models.ImageField(upload_to="productos")
-    imagen2 = models.ImageField(upload_to="productos", blank=True)
-    imagen3 = models.ImageField(upload_to="productos" ,blank=True)
-    user_id = models.ForeignKey(Perfil, on_delete=models.CASCADE)
-    categorias = models.ManyToManyField(Categoria, blank=True)
+    imagen = models.ImageField(upload_to="productos/", blank=True)
+    imagen2 = models.ImageField(upload_to="productos/", blank=True)
+    imagen3 = models.ImageField(upload_to="productos/" ,blank=True)
+    user_id = models.ForeignKey(Perfil,related_name='productos', on_delete=models.CASCADE)
+    categorias = models.ForeignKey(Categoria, on_delete=models.CASCADE)
+    create_datetime = models.DateTimeField(auto_now_add = True)
     
-   
+    def recientes():
+        return Producto.objects.all().order_by('create_datetime')
+    
+    
+    
 class Comentario(models.Model):
     
     texto = models.TextField(blank=True,null=True)
     emisor = models.ForeignKey(Perfil, on_delete=models.CASCADE, related_name = 'emisor')
     receptor = models.ForeignKey(Perfil, on_delete=models.CASCADE,  related_name = 'receptor')
+    create_datetime = models.DateTimeField(auto_now_add = True)
 
 
 class Seguidor(models.Model):
     
-    seguidor = models.ForeignKey(Perfil, on_delete=models.CASCADE, related_name = 'seguidor')
-    seguido = models.ForeignKey(Perfil, on_delete=models.CASCADE, related_name = 'seguido')
+    seguidor = models.ForeignKey(Perfil,on_delete=models.CASCADE, related_name = 'seguidor')
+    seguido = models.ForeignKey(Perfil,on_delete=models.CASCADE, related_name = 'seguido')
