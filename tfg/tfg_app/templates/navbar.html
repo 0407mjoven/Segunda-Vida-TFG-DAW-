@@ -1,0 +1,25 @@
+<nav class="navbar navbar-light bg-light border border-1 border-primary">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      Pulse para ver las categorias
+    </div>
+  </nav>
+  <div class="collapse" id="navbarToggleExternalContent" data-bs-theme="light">
+    <div class="bg-light p-4">
+      <h5 class="text-body-emphasis h4">Categorias</h5>
+      <br>
+      <div class="row" style="padding-left: 0; padding-right: 0">
+        {% for categoria in categorias %}
+            <div class="col-md-3 cat"style="padding-left: 0; padding-right: 0">
+                <div class="card" id="cart"style="padding-left: 0;">
+                    <div class="card-body text-center">
+                        {{ categoria.nombre }}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    </div>
+  </div>

@@ -2,44 +2,25 @@
 <html lang="en">
 <head>
     <title>Productos</title>
-    <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <!-- Bootstrap CSS v5.2.1 -->
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-        crossorigin="anonymous"
-    />
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-        }
-    </style>
 </head>
 <body>
     {% include 'header.html'%}
     <div class="row">
     <aside class="col-md-3">
-
         <div class="card">
           <article class="filter-group">
             <header class="card-header">
               <a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true" class="">
-                <i class="icon-control fa fa-chevron-down"></i>
                 <h6 class="title">Categorias</h6>
               </a>
             </header>
-            <div class="filter-content collapse show" id="collapse_1" style="">
+            <div class="filter-content collapse show" id="collapse_1">
               <div class="card-body">
 
                 <ul class="list-menu">
-                  <li><a>Mostrar Todos</a></li>
                   {% for categoria in categorias %}
                   <li><a href="{{ category.get_url }}">{{ categoria.nombre}}</a></li>
                   {% endfor %}
@@ -50,48 +31,16 @@
           </article> <!-- filter-group  .// -->
           <article class="filter-group">
             <header class="card-header">
-              <a href="#" data-toggle="collapse" data-target="#collapse_4" aria-expanded="true" class="">
-                <i class="icon-control fa fa-chevron-down"></i>
-                <h6 class="title">Tamaños </h6>
-              </a>
-            </header>
-            <div class="filter-content collapse show" id="collapse_4" style="">
-              <div class="card-body">
-                <label class="checkbox-btn">
-                  <input type="checkbox">
-                  <span class="btn btn-light"> XS </span>
-                </label>
-
-                <label class="checkbox-btn">
-                  <input type="checkbox">
-                  <span class="btn btn-light"> SM </span>
-                </label>
-
-                <label class="checkbox-btn">
-                  <input type="checkbox">
-                  <span class="btn btn-light"> LG </span>
-                </label>
-
-                <label class="checkbox-btn">
-                  <input type="checkbox">
-                  <span class="btn btn-light"> XXL </span>
-                </label>
-              </div><!-- card-body.// -->
-            </div>
-          </article> <!-- filter-group .// -->
-
-          <article class="filter-group">
-            <header class="card-header">
               <a href="#" data-toggle="collapse" data-target="#collapse_3" aria-expanded="true" class="">
                 <i class="icon-control fa fa-chevron-down"></i>
                 <h6 class="title">Precios </h6>
               </a>
             </header>
-            <div class="filter-content collapse show" id="collapse_3" style="">
+            <div class="filter-content collapse show" id="collapse_3" >
               <div class="card-body">
 
                 <div class="form-row">
-                  <div class="form-group col-md-6">
+                  <div class="form-group col-md-5">
                     <label>Min</label>
                     <!-- <input class="form-control" placeholder="$0" type="number"> -->
                     <select class="mr-2 form-control">
@@ -104,7 +53,7 @@
                       <option value="1000">$1000</option>
                     </select>
                   </div>
-                  <div class="form-group text-right col-md-6">
+                  <div class="form-group text-right col-md-5">
                     <label>Max</label>
                     <select class="mr-2 form-control">
                       <option value="50">$50</option>
@@ -116,11 +65,11 @@
                       <option value="2000">$2000+</option>
                     </select>
                   </div>
-                </div> <!-- form-row.// -->
+                </div> 
                 <button class="btn btn-block btn-primary">Buscar</button>
-              </div><!-- card-body.// -->
+              </div>
             </div>
-          </article> <!-- filter-group .// -->
+          </article>
 
         </div> <!-- card.// -->
 
@@ -192,9 +141,8 @@
   
       </div>
   
-    </div> <!-- container .//  -->
+    </div>
   </section>
-  <!-- ========================= SECTION CONTENT END// ========================= -->
     </main>
 </div>
 
@@ -202,15 +150,6 @@
             <!-- place footer here -->
         </footer>
         <!-- Bootstrap JavaScript Libraries -->
-        <script
-            src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-            crossorigin="anonymous"
-        ></script>
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
-            integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
-            crossorigin="anonymous"
-        ></script>
+       
     </body>
 </html>

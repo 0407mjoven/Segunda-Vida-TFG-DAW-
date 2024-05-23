@@ -1,19 +1,57 @@
-<header>
-    <div class="row p-4 bg-primary" style="--bs-gutter-x: 0">
+{% include 'base.html'%}
+{% load static %}
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Playfair Display', serif;
+    }
+    #cart {
+        transition: background-color 0.3s, color 0.3s;
+    }
+    #cart:hover {
+        background-color: #0d6efd; /* Color primary de Bootstrap */
+        color: white; /* Cambia el color del texto al pasar el cursor */
+    }
+</style>
+<header class=" border border-1 border-primary">
+    <div class="row p-2 d-flex justify-content-center align-items-center" style="--bs-gutter-x: 0">
             <div class="col-2">
-                <h1 class="text-light">Segunda vida</h1>
+                <!-- <img src="{% static 'img/logo.png' %}"> -->
+                <h1 class="">Segunda vida</h1>
             </div>
         
-            <div class="col-8">
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <a><button class="btn btn-outline-success" type="submit">Search</button></a>
+            <div class="col-6">
+
+                <form action="{% url 'product_create' %}" class="search mx-auto" style="width:80%;">
+                  <div class="input-group w-100">
+                      <input type="text" class="form-control" placeholder="Buscar Productos" name="keyword">
+                      <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                      </div>
+                    </div>
                 </form>
+              </div>
+            <div class="col justify-content-right align-items-center">
+                <div class="row d-flex justify-content-right align-items-center">
+                    <div class="col-5">
+                        <a href="{% url 'product_create' %}"><button class="btn btn-outline-primary w-100"> Subir producto</button></a>
+                    </div>
+                    <div class="col-5">
+                        <a href="{% url 'logout' %}" style="color: rgb(0, 0, 0); text-decoration: none;"><button class="btn btn-outline-primary w-100"><i class="bi bi-box-arrow-left"></i>Cerrar sesión</button></a>
+                    </div>
+                    <div class="col">
+                        <a href="{% url 'perfil' pk=request.user.pk %}" style="float: right;"><img style=" border-radius: 100%" src="{{perfil.foto.url}}" width="50px"></a>
+
+                    </div>
+                    <div class="col p-0">
+                    </div>
+                </div>
             </div>
-            <div class="col">
-                <a href="{% url 'product_create' %}"><button class="btn btn-outline-primary">Subir producto</button></a>
-                <a href="{% url 'perfil' pk=request.user.pk %}" style="float: right;"><img style=" border-radius: 100%" src="{{perfil.foto.url}}" width="50px"></a>
-            </div>
+
 </div>
+
     
 </header>

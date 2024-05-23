@@ -19,17 +19,25 @@ class Login(FormView):
     def form_valid(self, form):
         login(self.request, form.get_user())
         return redirect ('/')
+class Menu(LoginRequiredMixin,TemplateView):
     
+    template_name = 'menu.html'
+
+    def get_context_data(self, **kwargs):
+            context = super().get_context_data(**kwargs)
+            context['perfil'] = Perfil.objects.get(user_id = self.request.user.id)
+            context['informaticos'] = Categoria.objects.filter(nombre__in = ['Consolas','Auriculares','Teléfonos','Ordenadores','Videojuegos','Smartwatchs'] )
+            context['verano'] = Categoria.objects.filter(nombre__in = ['Deportes','Libros','Teléfonos','Ordenadores','Videojuegos','Smartwatchs'] )
+            return context
+
 class ProductoListView(LoginRequiredMixin, TemplateView):
-    template_name = 'producto_list.html'
+    template_name = 'menu.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['productos'] = Producto.objects.all()
         context['form'] = FiltroProductoForm
         context['perfil'] = Perfil.objects.get(user_id = self.request.user.id)
-        context['informaticos'] = Producto.objects.filter(categorias = Categoria.objects.get(nombre = 'Informática'))
-        context['categorias'] = Categoria.objects.all()
         return context
 
     def post(self, request, *args, **kwargs):
