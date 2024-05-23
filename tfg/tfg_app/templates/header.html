@@ -1,8 +1,19 @@
 <header>
-    <div class="col p-4 bg-success">
-        <a href="{% url 'perfil' pk=request.user.pk %}" style="float: right;"><img style=" border-radius: 100%" src="{{perfil.foto.url}}" width="50px"></a>
-        <h1 class="text-center text-light">Segunda vida</h1>
-
-    </div>
+    <div class="row p-4 bg-primary" style="--bs-gutter-x: 0">
+            <div class="col-2">
+                <h1 class="text-light">Segunda vida</h1>
+            </div>
+        
+            <div class="col-8">
+                <form class="d-flex" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <a><button class="btn btn-outline-success" type="submit">Search</button></a>
+                </form>
+            </div>
+            <div class="col">
+                <a href="{% url 'product_create' %}"><button class="btn btn-outline-primary">Subir producto</button></a>
+                <a href="{% url 'perfil' pk=request.user.pk %}" style="float: right;"><img style=" border-radius: 100%" src="{{perfil.foto.url}}" width="50px"></a>
+            </div>
+</div>
     
 </header>

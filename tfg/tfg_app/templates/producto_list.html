@@ -20,112 +20,184 @@
             padding: 0;
             font-family: Arial, sans-serif;
         }
-
-
-        .navbar-vertical {
-            position: absolute;
-            top: 10.88%; /* Colocar el navbar vertical justo debajo del header */
-            left: 0;
-            width: 20%; /* Ancho del navbar */
-            height: 100%;
-            padding: 20px; /* Espaciado interior del navbar */
-        }
-
-        .navbar-vertical ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .navbar-vertical ul li {
-            margin-bottom: 10px; /* Espaciado entre ítems de la lista */
-        }
-
-        .navbar-vertical ul li a {
-            display: block;
-            text-decoration: none;
-        }
-        .col-3{
-            padding: 0;
-        }
-        .card {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-        .card-img-top {
-            object-fit: cover;
-            height: 200px; /* Puedes ajustar esta altura según tus necesidades */
-        }
-        .card-body {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        .card-title, .card-text {
-            margin-bottom: auto;
-        }
-        .btn {
-            margin-top: auto;
-        }
     </style>
 </head>
 <body>
-    {% include 'header.html' %}
-    <nav class="navbar-vertical">
-        <form method="post" style="padding: 15%;">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Filtrar</button>
-        </form>
-        <a href="{% url 'logout' %}" style="color: rgb(0, 0, 0); text-decoration: none;"><i class="bi bi-box-arrow-left">    Cerrar sesión</i></a>
-    </nav>
-    <main>
-        <div class="container-fluid pt-5" style="padding-left: 20%;">
-    
-            <div class="col" >
+    {% include 'header.html'%}
+    <div class="row">
+    <aside class="col-md-3">
 
-                <div class="row"style="left: 60%;" >
-                <h4>Añadidos recientemente</h4>
-                {% for producto in productos %}
-                
-                    <div class="col-3">
-                        <div class="card">
-                            <img src="{{producto.imagen.url}}" class="card-img-top" alt="{{producto.nombre}}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{producto.nombre}}</h5>
-                                <p class="card-text" style="max-height:100px; overflow: hidden; text-overflow:ellipsis">{{producto.descripcion}}</p>
-                                <h4 class="card-text">{{producto.precio}}€</h4>
-                                <p class="card-text"><i class="bi bi-geo-alt-fill"></i> {{producto.user_id.localizacion}}</p>
+        <div class="card">
+          <article class="filter-group">
+            <header class="card-header">
+              <a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true" class="">
+                <i class="icon-control fa fa-chevron-down"></i>
+                <h6 class="title">Categorias</h6>
+              </a>
+            </header>
+            <div class="filter-content collapse show" id="collapse_1" style="">
+              <div class="card-body">
 
-                                <a href="{% url 'product_detail' pk=producto.pk%}" class="btn btn-dark" style="width: 100%;">Ver mas detalles</a>
-                            </div>
-                        </div>  
-                    </div>
-                {% endfor %}
-                <br>
-                <div class="row"style="left: 60%;" >
-                    <h4>Disfruta de la maravillosa informática</h4>
-                    {% for producto in informática %}
-                    
-                    <div class="col-3">
-                        <div class="card">
-                            <img src="{{producto.imagen.url}}" class="card-img-top" alt="{{producto.nombre}}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{producto.nombre}}</h5>
-                                <p class="card-text" style="max-height:100px; overflow: hidden; text-overflow:ellipsis">{{producto.descripcion}}</p>
-                                <h4 class="card-text">{{producto.precio}}€</h4>
-                                <p class="card-text"><i class="bi bi-geo-alt-fill"></i> {{producto.user_id.localizacion}}</p>
+                <ul class="list-menu">
+                  <li><a>Mostrar Todos</a></li>
+                  {% for categoria in categorias %}
+                  <li><a href="{{ category.get_url }}">{{ categoria.nombre}}</a></li>
+                  {% endfor %}
+                </ul>
 
-                                <a href="{% url 'product_detail' pk=producto.pk%}" class="btn btn-dark" style="width: 100%;">Ver mas detalles</a>
-                            </div>
-                        </div>  
-                    </div>
-                </div>
-            {% endfor %}
+              </div> <!-- card-body.// -->
             </div>
-        </div>
+          </article> <!-- filter-group  .// -->
+          <article class="filter-group">
+            <header class="card-header">
+              <a href="#" data-toggle="collapse" data-target="#collapse_4" aria-expanded="true" class="">
+                <i class="icon-control fa fa-chevron-down"></i>
+                <h6 class="title">Tamaños </h6>
+              </a>
+            </header>
+            <div class="filter-content collapse show" id="collapse_4" style="">
+              <div class="card-body">
+                <label class="checkbox-btn">
+                  <input type="checkbox">
+                  <span class="btn btn-light"> XS </span>
+                </label>
+
+                <label class="checkbox-btn">
+                  <input type="checkbox">
+                  <span class="btn btn-light"> SM </span>
+                </label>
+
+                <label class="checkbox-btn">
+                  <input type="checkbox">
+                  <span class="btn btn-light"> LG </span>
+                </label>
+
+                <label class="checkbox-btn">
+                  <input type="checkbox">
+                  <span class="btn btn-light"> XXL </span>
+                </label>
+              </div><!-- card-body.// -->
+            </div>
+          </article> <!-- filter-group .// -->
+
+          <article class="filter-group">
+            <header class="card-header">
+              <a href="#" data-toggle="collapse" data-target="#collapse_3" aria-expanded="true" class="">
+                <i class="icon-control fa fa-chevron-down"></i>
+                <h6 class="title">Precios </h6>
+              </a>
+            </header>
+            <div class="filter-content collapse show" id="collapse_3" style="">
+              <div class="card-body">
+
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label>Min</label>
+                    <!-- <input class="form-control" placeholder="$0" type="number"> -->
+                    <select class="mr-2 form-control">
+                      <option value="0">$0</option>
+                      <option value="50">$50</option>
+                      <option value="100">$100</option>
+                      <option value="150">$150</option>
+                      <option value="200">$200</option>
+                      <option value="500">$500</option>
+                      <option value="1000">$1000</option>
+                    </select>
+                  </div>
+                  <div class="form-group text-right col-md-6">
+                    <label>Max</label>
+                    <select class="mr-2 form-control">
+                      <option value="50">$50</option>
+                      <option value="100">$100</option>
+                      <option value="150">$150</option>
+                      <option value="200">$200</option>
+                      <option value="500">$500</option>
+                      <option value="1000">$1000</option>
+                      <option value="2000">$2000+</option>
+                    </select>
+                  </div>
+                </div> <!-- form-row.// -->
+                <button class="btn btn-block btn-primary">Buscar</button>
+              </div><!-- card-body.// -->
+            </div>
+          </article> <!-- filter-group .// -->
+
+        </div> <!-- card.// -->
+
+      </aside> <!-- col.// -->
+
+    <main class="col-md-9">
+        <header class="border-bottom mb-4 pb-3">
+            <div class="form-inline">
+              <span class="mr-md-auto"><b>{{ product_count }}</b> Productos Encontrados </span>
+  
+            </div>
+          </header><!-- sect-heading -->
+  
+          <div class="row">
+            <h4>Añadidos recientemente</h4>
+            {% for product in productos %}
+            <div class="col-md-4">
+              <figure class="card card-product-grid">
+                <div class="img-wrap">
+  
+  
+                  <a href="{{ product.get_url }}"><img src="{{ product.imagen.url }}" width="200px"></a>
+  
+                </div> <!-- img-wrap.// -->
+                <figcaption class="info-wrap">
+                  <div class="fix-height">
+                    <a href="{{ product.get_url }}" class="title">{{product.nombre}}</a>
+                    <div class="price-wrap mt-2">
+                      <span class="price">{{ product.precio }}</span>
+                    </div> <!-- price-wrap.// -->
+                  </div>
+                  <a href="{% url 'product_detail' product.id %}" class="btn btn-block btn-success">Agregar al Carrito </a>
+                </figcaption>
+              </figure>
+            </div> <!-- col.// -->
+            {% endfor %}
+          </div> <!-- row end.// -->
+  
+  
+          <nav class="mt-4" aria-label="Page navigation sample">
+  
+            {% if producto.has_other_pages %}
+            <ul class="pagination">
+              {% if producto.has_previous %}
+              <li class="page-item"><a class="page-link" href="?page={{ producto.previous_page_number }}">Anterior</a></li>
+              {% else %}
+              <li class="page-item disabled"><a class="page-link" href="#">Anterior</a></li>
+              {% endif %}
+  
+              {% for i in products.paginator.page_range %}
+                {% if products.number == i %}
+                <li class="page-item active"><a class="page-link" href="#">{{i}}</a></li>
+                {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+                {% endif %}
+              {% endfor %}
+  
+              {% if products.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{producto.next_page_number}}">Siguiente</a></li>
+              {% else %}
+                <li class="page-item disabled"><a class="page-link" href="#">Siguiente</a></li>
+              {% endif %}
+            </ul>
+            {% endif %}
+  
+          </nav>
+  
+        </main> <!-- col.// -->
+  
+      </div>
+  
+    </div> <!-- container .//  -->
+  </section>
+  <!-- ========================= SECTION CONTENT END// ========================= -->
     </main>
+</div>
+
         <footer>
             <!-- place footer here -->
         </footer>

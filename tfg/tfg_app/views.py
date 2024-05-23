@@ -29,6 +29,7 @@ class ProductoListView(LoginRequiredMixin, TemplateView):
         context['form'] = FiltroProductoForm
         context['perfil'] = Perfil.objects.get(user_id = self.request.user.id)
         context['informaticos'] = Producto.objects.filter(categorias = Categoria.objects.get(nombre = 'Informática'))
+        context['categorias'] = Categoria.objects.all()
         return context
 
     def post(self, request, *args, **kwargs):
