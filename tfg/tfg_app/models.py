@@ -23,6 +23,7 @@ class Categoria(models.Model):
     
     id = models.IntegerField(primary_key=True)
     nombre = models.CharField(max_length = 1000)
+    icono = models.CharField(max_length=1000)
     
     def __str__(self) -> str:
         return self.nombre

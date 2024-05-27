@@ -11,37 +11,42 @@
             font-size: 3em;
             text-align: center;
             margin-top: 1%;
-        }
+           
 
+        }
     </style>
 </head>
 <body>
     {% include 'header.html'%}
     <div class="titulo">
 
-    <div class="col p-4 text-center">
-        <div class="row">
-            <h1>Bienvenido a Segunda Vida</h1>
+        <div class="col p-4 text-center">
+            <div class="row">
+                <h1>Bienvenido a Segunda Vida</h1>
+            </div>
+            <div class="row p-4">
+                <h3>Encuentra lo que quieras, donde quieras y al precio que quieras</h3>
+            </div>
         </div>
-        <div class="row p-4">
-            <h3>Encuentra lo que quieras, donde quieras y al precio que quieras</h3>
-        </div>
-    </div>
 
+        <div class="border border-3 border-dark"></div>
   
-</div>
+    </div>
+    <br>
 <div class="container">
     <h4>Disfruta de la informática al mejor precio</h4>
+    <div class="border border-1 border-dark"></div>
+
     <br>
 <div class="row">
     {% for categoria in informaticos%}
     <div class="col-md-2" >
-        <a href="{% url 'index'%}">
+        <a href="{% url 'product_list' pk=categoria.pk%}">
         <div class="card pt-5"id="cart" >
             <div class="card-body text-center p-2 pt-3 pb-4">
-                <i class="bi bi-pc-display" style="font-size: 4em;"></i>
+                <i class="{{categoria.icono}}"  style="font-size: 4em;"></i>
             </div>
-            <div class="card-footer border-0 text-center p-2">
+            <div class="card-footer border-0 text-center p-2" style=" text-decoration: none;">
                 {{categoria.nombre}}
             </div>
         </div>
@@ -51,15 +56,17 @@
 </div>
     <br><br>
     <h4>Se acerca el verano y con él el tiempo libre</h4>
+    <div class="border border-1 border-dark"></div>
+
     <br>
 <div class="row">
     {% for categoria in verano%}
   
     <div class="col-md-2" >
-        <a href="{% url 'index'%}">
+        <a href="{% url 'product_list' pk=categoria.pk%}">
         <div class="card pt-5"id="cart" >
             <div class="card-body text-center p-2 pt-3 pb-4">
-                <i class="bi bi-pc-display" style="font-size: 4em;"></i>
+                <i class="{{categoria.icono}}" style="font-size: 4em;"></i>
             </div>
             <div class="card-footer border-0 text-center p-2">
                 {{categoria.nombre}}

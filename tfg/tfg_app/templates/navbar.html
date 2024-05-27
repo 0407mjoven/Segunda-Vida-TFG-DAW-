@@ -1,4 +1,4 @@
-<nav class="navbar navbar-light bg-light border border-1 border-primary">
+<nav class="navbar navbar-light">
     <div class="container-fluid">
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -13,11 +13,13 @@
       <div class="row" style="padding-left: 0; padding-right: 0">
         {% for categoria in categorias %}
             <div class="col-md-3 cat"style="padding-left: 0; padding-right: 0">
+              <a href="{% url 'product_list' pk=categoria.pk%}">
                 <div class="card" id="cart"style="padding-left: 0;">
                     <div class="card-body text-center">
                         {{ categoria.nombre }}
                     </div>
                 </div>
+              </a>
             </div>
         {% endfor %}
     </div>

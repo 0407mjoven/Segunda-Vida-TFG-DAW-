@@ -4,117 +4,75 @@
     <title>Productos</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-
+<style>
+  .product-card {
+    margin-bottom: 30px;
+    transition: transform 0.3s ease; /* Transición suave para el efecto */
+}
+.product-card:hover {
+    transform: scale(1.05); /* Efecto de agrandamiento */
+}
+.product-img {
+    height: 200px;
+    object-fit: cover;
+}
+.product-price {
+    font-weight: bold;
+}
+.card-title, .card-text {
+    margin-bottom: auto;
+}
+.btn {
+    margin-top: auto;
+    width: 100%;
+}
+</style>
 </head>
 <body>
     {% include 'header.html'%}
-    <div class="row">
-    <aside class="col-md-3">
-        <div class="card">
-          <article class="filter-group">
-            <header class="card-header">
-              <a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true" class="">
-                <h6 class="title">Categorias</h6>
-              </a>
-            </header>
-            <div class="filter-content collapse show" id="collapse_1">
-              <div class="card-body">
-
-                <ul class="list-menu">
-                  {% for categoria in categorias %}
-                  <li><a href="{{ category.get_url }}">{{ categoria.nombre}}</a></li>
-                  {% endfor %}
-                </ul>
-
-              </div> <!-- card-body.// -->
-            </div>
-          </article> <!-- filter-group  .// -->
-          <article class="filter-group">
-            <header class="card-header">
-              <a href="#" data-toggle="collapse" data-target="#collapse_3" aria-expanded="true" class="">
-                <i class="icon-control fa fa-chevron-down"></i>
-                <h6 class="title">Precios </h6>
-              </a>
-            </header>
-            <div class="filter-content collapse show" id="collapse_3" >
-              <div class="card-body">
-
-                <div class="form-row">
-                  <div class="form-group col-md-5">
-                    <label>Min</label>
-                    <!-- <input class="form-control" placeholder="$0" type="number"> -->
-                    <select class="mr-2 form-control">
-                      <option value="0">$0</option>
-                      <option value="50">$50</option>
-                      <option value="100">$100</option>
-                      <option value="150">$150</option>
-                      <option value="200">$200</option>
-                      <option value="500">$500</option>
-                      <option value="1000">$1000</option>
-                    </select>
-                  </div>
-                  <div class="form-group text-right col-md-5">
-                    <label>Max</label>
-                    <select class="mr-2 form-control">
-                      <option value="50">$50</option>
-                      <option value="100">$100</option>
-                      <option value="150">$150</option>
-                      <option value="200">$200</option>
-                      <option value="500">$500</option>
-                      <option value="1000">$1000</option>
-                      <option value="2000">$2000+</option>
-                    </select>
-                  </div>
-                </div> 
-                <button class="btn btn-block btn-primary">Buscar</button>
-              </div>
-            </div>
-          </article>
-
-        </div> <!-- card.// -->
-
-      </aside> <!-- col.// -->
-
-    <main class="col-md-9">
-        <header class="border-bottom mb-4 pb-3">
-            <div class="form-inline">
-              <span class="mr-md-auto"><b>{{ product_count }}</b> Productos Encontrados </span>
+    {% include 'navbar.html'%}    
   
-            </div>
-          </header><!-- sect-heading -->
   
-          <div class="row">
-            <h4>Añadidos recientemente</h4>
+
+    <main class="col">
+      {% if busqueda %}
+      <h2 style="margin-left: 10%;">Resultados de la búsqeda ({{num}})</h2>
+
+      {% else %}
+      <h2 style="margin-left: 10%;">Productos en la categoria {{object}}</h2>
+
+      {% endif %}
+      <div class="border border-3 border-dark" style="margin-left: 10%; margin-right: 10%"></div>
+      <br>
+      <div class="form" style="margin-left: 10%;">
+      <a>{{form.precio_maximo}}</a>-<a>{{form.precio_minimo}}</a>{{form.provincia}}  
+
+      </form>
+      </div>
+      <div class="container mt-5">
+
+        <div class="row">
             {% for product in productos %}
             <div class="col-md-4">
-              <figure class="card card-product-grid">
-                <div class="img-wrap">
-  
-  
-                  <a href="{{ product.get_url }}"><img src="{{ product.imagen.url }}" width="200px"></a>
-  
-                </div> <!-- img-wrap.// -->
-                <figcaption class="info-wrap">
-                  <div class="fix-height">
-                    <a href="{{ product.get_url }}" class="title">{{product.nombre}}</a>
-                    <div class="price-wrap mt-2">
-                      <span class="price">{{ product.precio }}</span>
-                    </div> <!-- price-wrap.// -->
+              <div class="card product-card">
+                  <img src="{{product.imagen.url}}" class="card-img-top product-img" alt="Imagen del Producto 1">
+                  <div class="card-body">
+                      <h5 class="card-title">{{product.nombre}}</h5>
+                      <p class="product-price">{{product.precio}}</p>
+                      <a href="{% url 'product_detail' pk=product.pk%}" class="btn btn-primary">Ver más</a>
                   </div>
-                  <a href="{% url 'product_detail' product.id %}" class="btn btn-block btn-success">Agregar al Carrito </a>
-                </figcaption>
-              </figure>
-            </div> <!-- col.// -->
+              </div>
+          </div>
             {% endfor %}
           </div> <!-- row end.// -->
   
   
           <nav class="mt-4" aria-label="Page navigation sample">
   
-            {% if producto.has_other_pages %}
+            {% if product.has_other_pages %}
             <ul class="pagination">
-              {% if producto.has_previous %}
-              <li class="page-item"><a class="page-link" href="?page={{ producto.previous_page_number }}">Anterior</a></li>
+              {% if product.has_previous %}
+              <li class="page-item"><a class="page-link" href="?page={{ product.previous_page_number }}">Anterior</a></li>
               {% else %}
               <li class="page-item disabled"><a class="page-link" href="#">Anterior</a></li>
               {% endif %}
@@ -128,7 +86,7 @@
               {% endfor %}
   
               {% if products.has_next %}
-                <li class="page-item"><a class="page-link" href="?page={{producto.next_page_number}}">Siguiente</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{product.next_page_number}}">Siguiente</a></li>
               {% else %}
                 <li class="page-item disabled"><a class="page-link" href="#">Siguiente</a></li>
               {% endif %}
@@ -138,7 +96,7 @@
           </nav>
   
         </main> <!-- col.// -->
-  
+  </div>
       </div>
   
     </div>

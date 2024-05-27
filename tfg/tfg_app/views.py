@@ -1,6 +1,6 @@
 from typing import Any
 from django.db.models.query import QuerySet
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.views.generic import ListView, DetailView,FormView, View, TemplateView
 from .models import *
@@ -10,7 +10,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.views import LogoutView
 from .forms import *
-
+import stripe
+stripe.api_key = "sk_test_51PKHA2KAZUWMcIwofIABfOT9YZfEfWIBl9Fa2pr2cV56AkCro7uWXFzdMAIJc7LaSql8ApwvFOEQv8PLXnc0JJKV00hHR10wgv"
 class Login(FormView):
     template_name = 'login.html'
     form_class = AuthenticationForm
@@ -19,6 +20,7 @@ class Login(FormView):
     def form_valid(self, form):
         login(self.request, form.get_user())
         return redirect ('/')
+    
 class Menu(LoginRequiredMixin,TemplateView):
     
     template_name = 'menu.html'
@@ -27,17 +29,21 @@ class Menu(LoginRequiredMixin,TemplateView):
             context = super().get_context_data(**kwargs)
             context['perfil'] = Perfil.objects.get(user_id = self.request.user.id)
             context['informaticos'] = Categoria.objects.filter(nombre__in = ['Consolas','Auriculares','Teléfonos','Ordenadores','Videojuegos','Smartwatchs'] )
-            context['verano'] = Categoria.objects.filter(nombre__in = ['Deportes','Libros','Teléfonos','Ordenadores','Videojuegos','Smartwatchs'] )
+            context['verano'] = Categoria.objects.filter(nombre__in = ['Deportes','Libros','Coleccionismo','Juegos','Instrumentos','Smartwatchs'] )
             return context
 
 class ProductoListView(LoginRequiredMixin, TemplateView):
-    template_name = 'menu.html'
+    template_name = 'producto_list.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['productos'] = Producto.objects.all()
+        context['productos'] = Producto.objects.filter(categorias = Categoria.objects.get(id = self.kwargs['pk']))
         context['form'] = FiltroProductoForm
         context['perfil'] = Perfil.objects.get(user_id = self.request.user.id)
+        context['categorias'] = Categoria.objects.all()
+        context['object'] =  Categoria.objects.get(id = self.kwargs['pk'])
+        context['form'] = FormularioBusqueda
+        
         return context
 
     def post(self, request, *args, **kwargs):
@@ -52,7 +58,25 @@ class ProductoListView(LoginRequiredMixin, TemplateView):
             return render(request, self.template_name, {'form': form, 'productos': productos_filtrados, 'perfil' : Perfil.objects.get(user_id = self.request.user.id)})
         else:
             return render(request, self.template_name, {'form': form,  'perfil' : Perfil.objects.get(user_id = self.request.user.id)})
+
+class BuscarProducto(LoginRequiredMixin,TemplateView):
+    
+    template_name = 'producto_list.html'
         
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        if self.request.method == 'GET' and 'keyword' in self.request.GET:
+            
+            term = self.request.GET.get('keyword')
+            resultados = Producto.objects.filter(nombre__icontains=term)
+        context = super().get_context_data(**kwargs)
+        context['productos'] = resultados
+        context['perfil'] = Perfil.objects.get(user_id = self.request.user.id)
+        context['categorias'] = Categoria.objects.all()
+        context['busqueda'] = True
+        context['form'] = FormularioBusqueda
+        context['numero'] = len(resultados)
+        return context
+    
 class ProductoDetailView(LoginRequiredMixin,DetailView):
     
     model = Producto
@@ -82,7 +106,14 @@ class ProductoCreateView(LoginRequiredMixin, CreateView):
         form = ProductoForm(request.POST,  request.FILES)
         form.instance.user_id = Perfil.objects.get(user = self.request.user.pk)
         if form.is_valid():
-            return super().form_valid(form)
+            objeto = form.save(commit=True)
+            producto = stripe.Product.create(name=form.cleaned_data['nombre'],description=form.cleaned_data['descripcion'],id=objeto.pk)
+            precio = stripe.Price.create(
+            product=producto.id,
+            unit_amount=form.cleaned_data['precio'] * 100,  # El precio en centavos (por ejemplo, 2000 centavos = 20.00 USD)
+            currency='eur',
+)
+            return redirect('index')
     
     
 class PerfilDetailView(DetailView):
@@ -125,21 +156,34 @@ class RegisterUserView(FormView):
     def post(self, request):
          if request.method == "POST":
             form = RegisterUserForm(request.POST, request.FILES)
+            
             if form.is_valid():
                 user = form.save()
-                Perfil.objects.create(
-                    user=user,
-                    fecha_nacimiento=form.cleaned_data['fecha_nacimiento'],
-                    biografía=form.cleaned_data.get('biografia', ''),
-                    foto=form.cleaned_data.get('foto_perfil', None),
-                    localizacion = 'Zaragoza'
-                )
+                print(form.cleaned_data)
+                if form.cleaned_data.get('foto_perfil', None) == None:
+                    Perfil.objects.create(
+                        user=user,
+                        fecha_nacimiento=form.cleaned_data['fecha_nacimiento'],
+                        biografía=form.cleaned_data.get('biografia', ''),
+                    
+                        localizacion = form.cleaned_data['localizacion']
+                    )
+                else:
+                        Perfil.objects.create(
+                        user=user,
+                        fecha_nacimiento=form.cleaned_data['fecha_nacimiento'],
+                        biografía=form.cleaned_data.get('biografia', ''),
+                        foto_perfil=form.cleaned_data.get('foto_perfil', None),
+                        localizacion = form.cleaned_data['localizacion']
+                    )
                 username = form.cleaned_data['username']
                 password = form.cleaned_data['password1']
                 user = authenticate(username=username, password=password)
                 if user is not None:
                     login(request, user)
                     return redirect('index')
+            else:
+                return render(request, 'registration/register.html', {'form': form})
                 
 
 class ProductoUpdateView(LoginRequiredMixin, UpdateView):
