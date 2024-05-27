@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 </head>
-<body class="d-flex justify-content-center align-items-center">
+<body class="d-flex justify-content-center align-items-center bg-primary">
     <div class="container">
 
     <div class="col">
@@ -15,12 +15,12 @@
             <h1>Segunda vida</h1>
         </div>
         <br>
-        {% if form.errors%}
+        {% if form.errors %}
             {{form.errors}}
         {% endif %}
     <div class="row">
 
-        <form method='POST' action="{% url 'register' %}">
+        <form method='POST' action="{% url 'register' %}" enctype="multipart/form-data">
             {% csrf_token %}
 
         <div class="card p-4">

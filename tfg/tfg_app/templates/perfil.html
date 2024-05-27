@@ -180,10 +180,32 @@
                                 <a href="{% url 'product_update' pk=productin.pk%}" class="btn btn-dark">Editar Producto</a>
                             </div>
                             <div class="col">
-                                <a href="{% url 'product_delete' pk=productin.pk%}" class="btn btn-dark">Eliminar Producto</a>
+                                <a class="btn btn-dark"  data-bs-toggle="modal" data-bs-target="#exampleModal">Eliminar Producto</a>
 
                             </div>
                         </div>
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h1 class="modal-title fs-5" id="exampleModalLabel">Filtros</h1>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                          
+                                    <h1>Eliminar Producto</h1>
+                                    <p>¿Estás seguro de que deseas eliminar el producto "{{ productin.nombre }}"?</p>
+                                    <form method="post" action="{% url 'product_delete' productin.pk %}">
+                                        {% csrf_token %}
+                                        <button type="submit">Sí, eliminar</button>
+                                        <a href="{% url 'perfil' pk=productin.user_id.user %}">Cancelar</a>  <!-- Cambia esto a la URL de la lista de productos o a donde quieras redirigir al cancelar -->
+                                    </form>
+                                    </div>
+                                  </div>
+                                    <button class="btn btn-block btn-primary" type="submit">Buscar</button>      </div>
+                              
+                                    </form>      
+                                  </div>
                         {% endif %}
                     </div>
                 </div>  

@@ -43,21 +43,32 @@ class ProductoListView(LoginRequiredMixin, TemplateView):
         context['categorias'] = Categoria.objects.all()
         context['object'] =  Categoria.objects.get(id = self.kwargs['pk'])
         context['form'] = FormularioBusqueda
+        context['ciudades'] = PROVINCIAS_CHOICES_ARRAY
         
         return context
 
     def post(self, request, *args, **kwargs):
-        form = FiltroProductoForm(request.POST)
-        if form.is_valid():
-            categoria_seleccionada = form.cleaned_data['categoria']
-            if categoria_seleccionada == '-----------':
-                productos_filtrados = Producto.objects.all()
-            else:
-                productos_filtrados = Producto.objects.filter(categorias=Categoria.objects.get(nombre=categoria_seleccionada))
-                
-            return render(request, self.template_name, {'form': form, 'productos': productos_filtrados, 'perfil' : Perfil.objects.get(user_id = self.request.user.id)})
+        productos = Producto.objects.all()
+        if request.method == 'POST':
+            form = FiltroProductoForm(request.POST)
+            if form.is_valid():
+                precio_minimo = form.cleaned_data.get('precio_minimo')
+                precio_maximo = form.cleaned_data.get('precio_maximo')
+
+                if precio_minimo is not None:
+                    productos = productos.filter(precio__gte=precio_minimo)
+                if precio_maximo is not None:
+                    productos = productos.filter(precio__lte=precio_maximo)
         else:
-            return render(request, self.template_name, {'form': form,  'perfil' : Perfil.objects.get(user_id = self.request.user.id)})
+            form = FiltroProductoForm()
+
+        context = {
+            'form': form,
+            'productos': productos,
+            'perfil' : Perfil.objects.get(user_id = self.request.user.id)
+        }
+        return render(request, 'producto_list.html', context)
+
 
 class BuscarProducto(LoginRequiredMixin,TemplateView):
     
@@ -75,6 +86,8 @@ class BuscarProducto(LoginRequiredMixin,TemplateView):
         context['busqueda'] = True
         context['form'] = FormularioBusqueda
         context['numero'] = len(resultados)
+        context['ciudades'] = PROVINCIAS_CHOICES_ARRAY
+
         return context
     
 class ProductoDetailView(LoginRequiredMixin,DetailView):
@@ -108,9 +121,10 @@ class ProductoCreateView(LoginRequiredMixin, CreateView):
         if form.is_valid():
             objeto = form.save(commit=True)
             producto = stripe.Product.create(name=form.cleaned_data['nombre'],description=form.cleaned_data['descripcion'],id=objeto.pk)
+            precius = form.cleaned_data['precio']
             precio = stripe.Price.create(
             product=producto.id,
-            unit_amount=form.cleaned_data['precio'] * 100,  # El precio en centavos (por ejemplo, 2000 centavos = 20.00 USD)
+            unit_amount= int(precius * 100),  # El precio en centavos (por ejemplo, 2000 centavos = 20.00 USD)
             currency='eur',
 )
             return redirect('index')
@@ -155,11 +169,9 @@ class RegisterUserView(FormView):
     
     def post(self, request):
          if request.method == "POST":
-            form = RegisterUserForm(request.POST, request.FILES)
-            
+            form = RegisterUserForm(self.request.POST, self.request.FILES)
             if form.is_valid():
                 user = form.save()
-                print(form.cleaned_data)
                 if form.cleaned_data.get('foto_perfil', None) == None:
                     Perfil.objects.create(
                         user=user,

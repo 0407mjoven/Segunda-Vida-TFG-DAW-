@@ -31,25 +31,66 @@
 <body>
     {% include 'header.html'%}
     {% include 'navbar.html'%}    
-  
+  <!-- Button trigger modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Filtros</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <div class="form"> 
+          <form action="POST">
+        <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="precio_minimo" class="form-label">Precio mínimo</label>
+              <input type="text" class="form-control" id="precio_minimo" name="precio_minimo" placeholder="Precio mínimo">      
+            </div>
+            <div class="col-md-6">
+              <label for="precio_maximo" class="form-label">Precio máximo</label>
+              <input type="text" class="form-control" id="precio_maximo" name="precio_maximo" placeholder="Precio máximo">      
+            </div>
+        </div>
+        <div class="mb-3">
+          <label for="exampleDataList" class="form-label">Datalist example</label>
+          <input class="form-control" list="datalistOptions" id="exampleDataList" placeholder="Busca tu provincia">
+          <datalist id="datalistOptions">
+          </datalist>
+          </div>
+        </div>
+
+          
+        
+          <button class="btn btn-block btn-primary" type="submit">Buscar</button>      </div>
+    
+          </form>      
+        </div>
+  </div>
+</div>
+  </div>
+</div>
   
 
     <main class="col">
       {% if busqueda %}
-      <h2 style="margin-left: 10%;">Resultados de la búsqeda ({{num}})</h2>
+      <h2 style="margin-left: 10%;">Resultados de la búsqeda ({{numero}})</h2>
 
       {% else %}
       <h2 style="margin-left: 10%;">Productos en la categoria {{object}}</h2>
 
       {% endif %}
-      <div class="border border-3 border-dark" style="margin-left: 10%; margin-right: 10%"></div>
+      <div class="border border-3 border-dark" style="margin-left: 10%; margin-right: 5%"></div>
       <br>
-      <div class="form" style="margin-left: 10%;">
-      <a>{{form.precio_maximo}}</a>-<a>{{form.precio_minimo}}</a>{{form.provincia}}  
-
-      </form>
+      <div class="btn btn-primary ml-4 mb-5 " style="border-radius: 100%; width:5%;height: 5%; margin-left: 10%;" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" style="border-radius:100%"></div>
       </div>
-      <div class="container mt-5">
+
+      <div class="container">
+
 
         <div class="row">
             {% for product in productos %}
@@ -108,6 +149,22 @@
             <!-- place footer here -->
         </footer>
         <!-- Bootstrap JavaScript Libraries -->
-       
+        <script>
+          document.addEventListener("DOMContentLoaded", function() {
+            // Array con las opciones a añadir
+            const provincias = ["A Coruña", "Álava", "Albacete", "Alicante", "Almería", "Asturias", "Ávila", "Badajoz", "Baleares", "Barcelona", "Burgos", "Cáceres", "Cádiz", "Cantabria", "Castellón", "Ciudad Real", "Córdoba", "Cuenca", "Girona", "Granada", "Guadalajara", "Guipúzcoa", "Huelva", "Huesca", "Jaén", "La Rioja", "Las Palmas", "León", "Lleida", "Lugo", "Madrid", "Málaga", "Murcia", "Navarra", "Ourense", "Palencia", "Pontevedra", "Salamanca", "Segovia", "Sevilla", "Soria", "Tarragona", "Santa Cruz de Tenerife", "Teruel", "Toledo", "Valencia", "Valladolid", "Vizcaya", "Zamora", "Zaragoza"];
+
+        
+            // Referencia al elemento datalist
+            const datalist = document.getElementById('datalistOptions');
+        
+            // Añadir opciones al datalist
+            provincias.forEach(provincia => {
+                const option = document.createElement('option');
+                option.value = provincia;
+                datalist.appendChild(option);
+            });
+        });
+        </script>
     </body>
 </html>
