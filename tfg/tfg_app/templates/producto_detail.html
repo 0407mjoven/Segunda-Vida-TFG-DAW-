@@ -65,7 +65,22 @@
             <br>
             <div style="height: 80%; width:90%; max-height:80%">
               <p>{{producto.descripcion}}</p>
-              
+              <form>
+                <div class="mb-3">
+                  <input type="checkbox" id="checkbox1" onclick="toggleButton()">
+                  <label for="checkbox1">He leído y acepto los términos y condiciones.</label>
+                  
+                </div>
+
+                <br>
+                <div class="mb-3">
+                    <input type="checkbox" id="checkbox2" onclick="toggleButton()"> Check-box 1
+                    <label for="checkbox2">He leído y acepto la política de privacidad.</label>
+
+                </div>
+                <br>
+                <button type="button" id="myButton" class="btn btn-dark w-100" disabled>Botón</button>
+            </form>
             </div>
             <br>
             <div class="row" style="width: 100%;">
@@ -98,5 +113,18 @@
             integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
             crossorigin="anonymous"
         ></script>
+        <script>
+          function toggleButton() {
+              var checkbox1 = document.getElementById("checkbox1");
+              var checkbox2 = document.getElementById("checkbox2");
+              var button = document.getElementById("myButton");
+  
+              if (checkbox1.checked && checkbox2.checked) {
+                  button.disabled = false;
+              } else {
+                  button.disabled = true;
+              }
+          }
+      </script>
     </body>
 </html>

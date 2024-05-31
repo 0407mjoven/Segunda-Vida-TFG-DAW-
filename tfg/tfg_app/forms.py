@@ -104,6 +104,15 @@ class FormularioBusqueda(forms.Form):
     provincia = forms.CharField(label='Provincia', required=False)
     
 class ProductoForm(forms.ModelForm):
+    
+    nombre = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
+    precio = forms.CharField(widget=forms.NumberInput(attrs={ 'class': 'form-control'}))
+    imagen = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control'}))
+    imagen2 = forms.ImageField(required=False,widget=forms.FileInput(attrs={'class': 'form-control'}))
+    imagen3 = forms.ImageField(required=False,widget=forms.FileInput(attrs={'class': 'form-control'}))
+    categorias = forms.ModelChoiceField(queryset=Categoria.objects.all(),widget=forms.Select(attrs={'class': 'form-control'}))
+    descripcion = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control'}),required=False)
+    
     class Meta:
         model = Producto
         fields = ("nombre", 'precio', 'imagen', 'imagen2', 'imagen3', 'categorias', 'descripcion')

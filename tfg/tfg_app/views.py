@@ -106,8 +106,28 @@ class ProductoDetailView(LoginRequiredMixin,DetailView):
     def get_context_data(self, **kwargs):
         contexto  ={} 
         contexto['producto'] = self.get_object()
+        contexto['perfil'] = Perfil.objects.get(user_id = self.request.user.id)
+        
         return contexto
     
+def mi_vista(request):
+        form = ProductoForm(request.POST,request.FILES)
+        form.instance.user_id = Perfil.objects.get(user = request.user.pk)
+        print(form)
+        if form.is_valid():
+            objeto = form.save(commit=True)
+            producto = stripe.Product.create(name=form.cleaned_data['nombre'],description=form.cleaned_data['descripcion'],id=objeto.pk)
+            precius = int(form.cleaned_data['precio'])
+            precio = stripe.Price.create(
+            product=producto.id,
+            unit_amount= precius * 100,  # El precio en centavos (por ejemplo, 2000 centavos = 20.00 USD)
+            currency='eur',
+            )
+        else:
+            form = ProductoForm()
+            return render(request, 'producto_form.html', {'form': form})
+
+        return redirect('index')
 class ProductoCreateView(LoginRequiredMixin, CreateView):
     
     model = Producto
@@ -116,8 +136,9 @@ class ProductoCreateView(LoginRequiredMixin, CreateView):
     success_url = '/'
     
     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
-        form = ProductoForm(request.POST,  request.FILES)
+        form = ProductoForm(self.request.POST,  self.request.FILES)
         form.instance.user_id = Perfil.objects.get(user = self.request.user.pk)
+        print(form)
         if form.is_valid():
             objeto = form.save(commit=True)
             producto = stripe.Product.create(name=form.cleaned_data['nombre'],description=form.cleaned_data['descripcion'],id=objeto.pk)
@@ -126,8 +147,12 @@ class ProductoCreateView(LoginRequiredMixin, CreateView):
             product=producto.id,
             unit_amount= int(precius * 100),  # El precio en centavos (por ejemplo, 2000 centavos = 20.00 USD)
             currency='eur',
-)
-            return redirect('index')
+            )
+        else:
+            form = ProductoForm()
+            return render(request, 'producto_form.html', {'form': form})
+
+        return redirect('index')
     
     
 class PerfilDetailView(DetailView):
@@ -147,6 +172,8 @@ class PerfilDetailView(DetailView):
         contexto['perfil'] = Perfil.objects.get(user_id = self.kwargs['pk'])
         contexto['form'] = CommentForm()
         contexto['comentarios'] = Comentario.objects.filter(receptor = contexto['perfil'] )
+        print(self.kwargs['pk'])
+        contexto['sigue'] = Seguidor.objects.filter(seguidor= Perfil.objects.get(user =self.request.user.pk),seguido=Perfil.objects.get(user = User.objects.get(id = self.kwargs['pk'])))
         return contexto
     
     
@@ -185,7 +212,7 @@ class RegisterUserView(FormView):
                         user=user,
                         fecha_nacimiento=form.cleaned_data['fecha_nacimiento'],
                         biografía=form.cleaned_data.get('biografia', ''),
-                        foto_perfil=form.cleaned_data.get('foto_perfil', None),
+                        foto=form.cleaned_data.get('foto_perfil', None),
                         localizacion = form.cleaned_data['localizacion']
                     )
                 username = form.cleaned_data['username']
@@ -218,7 +245,9 @@ class ProductoUpdateView(LoginRequiredMixin, UpdateView):
         if request.method == 'POST':
             form = ProductoForm(request.POST, request.FILES)
             producto = Producto.objects.get(id = self.kwargs['pk'])
-
+            form.instance.imagen = producto.imagen
+            
+            print(form)
             if form.is_valid():
                 form.instance.user_id = Perfil.objects.get(user_id = producto.user_id.user)
                 producto = form.save()
@@ -234,8 +263,26 @@ class ProductoDeleteView(DeleteView):
     template_name = 'producto_delete.html'
     success_url = '/'
 
-class Seguir(CreateView):
     
-    def post(self, request: HttpRequest, *args: str, **kwargs: Any):
-        Seguidor.objects.create(seguidor = Perfil.objects.get(user = self.request.user.pk), seguido = Perfil.objects.get(user = self.kwargs['pk']) )
-        return super().post(request, *args, **kwargs)
+def seguir(request, *args, **kwargs):
+    Seguidor.objects.create(seguidor = Perfil.objects.get(user = request.user.pk), seguido = Perfil.objects.get(user = kwargs['pk']) )
+    return redirect('../perfil/'+str(kwargs['pk']))
+    
+class Compra(TemplateView):
+    
+    def post(self):
+        if self.request.method == "POST":
+            checkout_session = stripe.checkout.Session.create(
+                line_items=[
+                    {
+                        "price": "<price_API_ID_HERE>",  # enter yours here!!!
+                        "quantity": 1,
+                    }
+                ],
+                mode="payment",
+                
+                success_url= '127.0.0.1:800/',
+                cancel_url='',
+            )
+            return redirect(checkout_session.url, code=303)
+        return redirect('index')
