@@ -10,6 +10,7 @@ class Perfil(models.Model):
     localizacion = models.CharField(blank = True, null = True, max_length=1000)
     foto = models.ImageField(upload_to="perfil", default='perfil/blankprofile.webp')
     create_datetime = models.DateTimeField(auto_now_add= True)
+    customer_id = models.CharField(blank=True,null=True,max_length = 100)
 
     def seguidores(self):
         return self.seguidor.all().count()
@@ -40,6 +41,8 @@ class Producto(models.Model):
     user_id = models.ForeignKey(Perfil,related_name='productos', on_delete=models.CASCADE)
     categorias = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     create_datetime = models.DateTimeField(auto_now_add = True)
+    product_id = models.CharField(blank=True,null=True,max_length = 100)
+    price_id = models.CharField(blank=True,null=True,max_length = 100)
     
     def recientes():
         return Producto.objects.all().order_by('create_datetime')

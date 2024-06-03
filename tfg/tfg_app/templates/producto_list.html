@@ -25,7 +25,9 @@
       <div class="modal-body">
 
         <div class="form"> 
-          <form action="POST">
+          <form method="post" action="{% url 'product_list' pk=object.pk%}">
+            {% csrf_token %}
+
         <div class="row mb-3">
             <div class="col-md-6">
               <label for="precio_minimo" class="form-label">Precio mínimo</label>

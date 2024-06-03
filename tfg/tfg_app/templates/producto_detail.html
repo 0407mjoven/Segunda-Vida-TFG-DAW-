@@ -26,7 +26,7 @@
 
     <body>
             {% include 'header.html'%}
-
+            {% include 'base.html' %}
         <main>
           <div class="row">
           <div class="col p-4">
@@ -79,7 +79,7 @@
 
                 </div>
                 <br>
-                <button type="button" id="myButton" class="btn btn-dark w-100" disabled>Botón</button>
+                <button type="button" id="myButton" class="btn btn-primary w-100" disabled><a href="{% url 'compra' pk=producto.pk%}">COMPRAR</a></button>
             </form>
             </div>
             <br>

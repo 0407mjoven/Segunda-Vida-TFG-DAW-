@@ -1,7 +1,7 @@
 from typing import Any
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse, JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import ListView, DetailView,FormView, View, TemplateView
 from .models import *
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -37,38 +37,40 @@ class ProductoListView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['productos'] = Producto.objects.filter(categorias = Categoria.objects.get(id = self.kwargs['pk']))
-        context['form'] = FiltroProductoForm
-        context['perfil'] = Perfil.objects.get(user_id = self.request.user.id)
+        categoria = Categoria.objects.get(id=self.kwargs['pk'])
+        context['productos'] = Producto.objects.filter(categorias=categoria)
+        context['perfil'] = Perfil.objects.get(user_id=self.request.user.id)
         context['categorias'] = Categoria.objects.all()
-        context['object'] =  Categoria.objects.get(id = self.kwargs['pk'])
-        context['form'] = FormularioBusqueda
+        context['object'] = categoria
+        context['form_busqueda'] = FormularioBusqueda()  # Cambié el nombre del contexto para evitar conflictos
         context['ciudades'] = PROVINCIAS_CHOICES_ARRAY
-        
         return context
 
     def post(self, request, *args, **kwargs):
-        productos = Producto.objects.all()
-        if request.method == 'POST':
-            form = FiltroProductoForm(request.POST)
-            if form.is_valid():
-                precio_minimo = form.cleaned_data.get('precio_minimo')
-                precio_maximo = form.cleaned_data.get('precio_maximo')
-
-                if precio_minimo is not None:
-                    productos = productos.filter(precio__gte=precio_minimo)
-                if precio_maximo is not None:
-                    productos = productos.filter(precio__lte=precio_maximo)
-        else:
-            form = FiltroProductoForm()
-
+        categoria = Categoria.objects.get(id=self.kwargs['pk'])
+        productos = Producto.objects.filter(categorias=categoria)
+        form = FormularioBusqueda(request.POST)
+        
+        if form.is_valid():
+            precio_minimo = form.cleaned_data.get('precio_minimo')
+            precio_maximo = form.cleaned_data.get('precio_maximo')
+            print(form.cleaned_data)
+            print(precio_minimo,precio_maximo)
+            if precio_minimo is not None:
+                productos = productos.filter(precio__gte=precio_minimo)
+            if precio_maximo is not None:
+                productos = productos.filter(precio__lte=precio_maximo)
+            print(productos)
         context = {
-            'form': form,
             'productos': productos,
-            'perfil' : Perfil.objects.get(user_id = self.request.user.id)
+            'form': form,
+            'perfil': Perfil.objects.get(user_id=self.request.user.id),
+            'categorias': Categoria.objects.all(),
+            'object': categoria,
+            'form_busqueda': FormularioBusqueda(),
+            'ciudades': PROVINCIAS_CHOICES_ARRAY
         }
         return render(request, 'producto_list.html', context)
-
 
 class BuscarProducto(LoginRequiredMixin,TemplateView):
     
@@ -142,12 +144,15 @@ class ProductoCreateView(LoginRequiredMixin, CreateView):
         if form.is_valid():
             objeto = form.save(commit=True)
             producto = stripe.Product.create(name=form.cleaned_data['nombre'],description=form.cleaned_data['descripcion'],id=objeto.pk)
-            precius = form.cleaned_data['precio']
+            precius = int(form.cleaned_data['precio'])
             precio = stripe.Price.create(
             product=producto.id,
-            unit_amount= int(precius * 100),  # El precio en centavos (por ejemplo, 2000 centavos = 20.00 USD)
+            unit_amount= precius * 100,  # El precio en centavos (por ejemplo, 2000 centavos = 20.00 USD)
             currency='eur',
             )
+            objeto.product_id = producto.id
+            objeto.price_id = precio.id
+            objeto.save()
         else:
             form = ProductoForm()
             return render(request, 'producto_form.html', {'form': form})
@@ -245,7 +250,7 @@ class ProductoUpdateView(LoginRequiredMixin, UpdateView):
         if request.method == 'POST':
             form = ProductoForm(request.POST, request.FILES)
             producto = Producto.objects.get(id = self.kwargs['pk'])
-            form.instance.imagen = producto.imagen
+            form.instance.imagen = producto.imagen.url
             
             print(form)
             if form.is_valid():
@@ -267,22 +272,32 @@ class ProductoDeleteView(DeleteView):
 def seguir(request, *args, **kwargs):
     Seguidor.objects.create(seguidor = Perfil.objects.get(user = request.user.pk), seguido = Perfil.objects.get(user = kwargs['pk']) )
     return redirect('../perfil/'+str(kwargs['pk']))
+        
+class Compra(View):
+    template_name = 'compra.html'
     
-class Compra(TemplateView):
-    
-    def post(self):
-        if self.request.method == "POST":
-            checkout_session = stripe.checkout.Session.create(
-                line_items=[
-                    {
-                        "price": "<price_API_ID_HERE>",  # enter yours here!!!
-                        "quantity": 1,
-                    }
-                ],
-                mode="payment",
+    def get(self, request, *args, **kwargs):
+        producto = get_object_or_404(Producto, pk=self.kwargs['pk'])
+        imagenes = [producto.imagen] if isinstance(producto.imagen, str) else producto.imagen
+        checkout_session = stripe.checkout.Session.create(
+            line_items=[
+                {
+                    "price_data": {
+                        "currency": "eur",
+                        "product_data": {
+                            "name": producto.nombre,
+                            "description": producto.descripcion,
+                        },
+                        "unit_amount": int(producto.precio * 100),  # convertir a centavos
+                    },
+                    "quantity": 1,
+                    
+                }
                 
-                success_url= '127.0.0.1:800/',
-                cancel_url='',
-            )
-            return redirect(checkout_session.url, code=303)
-        return redirect('index')
+            ],
+            
+            mode="payment",
+            success_url=request.build_absolute_uri('/') + 'success/',
+            cancel_url=request.build_absolute_uri('/') + 'cancel/',
+        )
+        return redirect(checkout_session.url, code=303)

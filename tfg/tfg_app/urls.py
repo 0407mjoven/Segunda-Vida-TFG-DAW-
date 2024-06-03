@@ -9,10 +9,11 @@ urlpatterns = [
     path('accounts/register',RegisterUserView.as_view(), name= 'register'),
     path('logout/',logout_view, name= 'logout'),
     path('product/<pk>',ProductoDetailView.as_view(), name='product_detail'),
-    path('product_create/', mi_vista, name='product_create'),
+    path('product_create/', ProductoCreateView.as_view(), name='product_create'),
     path('perfil/<pk>', PerfilDetailView.as_view(), name='perfil'),
     path('product_update/<pk>',ProductoUpdateView.as_view(), name='product_update'),
     path('producto/<int:pk>/eliminar/', ProductoDeleteView.as_view(), name='product_delete'),
+    path('compra/<pk>', Compra.as_view(), name='compra'),
     path('seguir/<pk>',seguir, name='seguir'),
     
 
