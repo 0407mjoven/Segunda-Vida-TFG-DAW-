@@ -123,3 +123,16 @@ class ProductoForm(forms.ModelForm):
         widget=forms.Select
     )
 
+class ProfileUpdate(forms.ModelForm):
+    
+    username = forms.CharField(max_length=30,required=True,widget=forms.TextInput(attrs={'placeholder': 'Nombre', 'class': 'form-control'})
+    )
+    biografía = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Biografía', 'class': 'form-control'}),required=False)
+    foto_perfil = forms.ImageField(required=False,widget=forms.FileInput(attrs={'class': 'form-control'})
+    )
+    fecha_nacimiento = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', 'placeholder': 'Fecha de nacimiento', 'class': 'form-control'}), required=True)
+    localizacion = forms.ChoiceField(label='Provincia', choices=PROVINCIAS_CHOICES, required=False,widget=forms.Select(attrs={'placeholder': 'Contraseña', 'class': 'form-control'}))
+    
+    class Meta:
+        model = Perfil
+        fields = ('username','fecha_nacimiento','foto_perfil','biografía','localizacion')

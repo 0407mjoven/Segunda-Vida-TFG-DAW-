@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 class Perfil(models.Model):
     
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    username = models.CharField(max_length=200)
     fecha_nacimiento = models.DateField(blank =True, null=True)
     biografía = models.TextField(blank = True, null = True)
     localizacion = models.CharField(blank = True, null = True, max_length=1000)

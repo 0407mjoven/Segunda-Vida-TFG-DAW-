@@ -11,6 +11,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.views import LogoutView
 from .forms import *
 import stripe
+
 stripe.api_key = "sk_test_51PKHA2KAZUWMcIwofIABfOT9YZfEfWIBl9Fa2pr2cV56AkCro7uWXFzdMAIJc7LaSql8ApwvFOEQv8PLXnc0JJKV00hHR10wgv"
 class Login(FormView):
     template_name = 'login.html'
@@ -74,7 +75,7 @@ class ProductoListView(LoginRequiredMixin, TemplateView):
 
 class BuscarProducto(LoginRequiredMixin,TemplateView):
     
-    template_name = 'producto_list.html'
+    template_name = 'product_search.html'
         
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         if self.request.method == 'GET' and 'keyword' in self.request.GET:
@@ -112,24 +113,7 @@ class ProductoDetailView(LoginRequiredMixin,DetailView):
         
         return contexto
     
-def mi_vista(request):
-        form = ProductoForm(request.POST,request.FILES)
-        form.instance.user_id = Perfil.objects.get(user = request.user.pk)
-        print(form)
-        if form.is_valid():
-            objeto = form.save(commit=True)
-            producto = stripe.Product.create(name=form.cleaned_data['nombre'],description=form.cleaned_data['descripcion'],id=objeto.pk)
-            precius = int(form.cleaned_data['precio'])
-            precio = stripe.Price.create(
-            product=producto.id,
-            unit_amount= precius * 100,  # El precio en centavos (por ejemplo, 2000 centavos = 20.00 USD)
-            currency='eur',
-            )
-        else:
-            form = ProductoForm()
-            return render(request, 'producto_form.html', {'form': form})
 
-        return redirect('index')
 class ProductoCreateView(LoginRequiredMixin, CreateView):
     
     model = Producto
@@ -140,9 +124,8 @@ class ProductoCreateView(LoginRequiredMixin, CreateView):
     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
         form = ProductoForm(self.request.POST,  self.request.FILES)
         form.instance.user_id = Perfil.objects.get(user = self.request.user.pk)
-        print(form)
         if form.is_valid():
-            objeto = form.save(commit=True)
+            objeto = form.save(commit=False)
             producto = stripe.Product.create(name=form.cleaned_data['nombre'],description=form.cleaned_data['descripcion'],id=objeto.pk)
             precius = int(form.cleaned_data['precio'])
             precio = stripe.Price.create(
@@ -167,17 +150,19 @@ class PerfilDetailView(DetailView):
     
     def get(self, request, *args, **kwargs):
         if self.request.user.is_authenticated:
+            print(self.kwargs)
             context = self.get_context_data()
+            print(context)
             return self.render_to_response(context)
         else:
             return super().get(request, *args, **kwargs)
         
     def get_context_data(self, **kwargs):
         contexto = {}
-        contexto['perfil'] = Perfil.objects.get(user_id = self.kwargs['pk'])
+        contexto['perfil'] = Perfil.objects.get(user_id = self.request.user.id)
+        contexto['perfil2'] = Perfil.objects.get(user_id = self.kwargs['pk'])
         contexto['form'] = CommentForm()
         contexto['comentarios'] = Comentario.objects.filter(receptor = contexto['perfil'] )
-        print(self.kwargs['pk'])
         contexto['sigue'] = Seguidor.objects.filter(seguidor= Perfil.objects.get(user =self.request.user.pk),seguido=Perfil.objects.get(user = User.objects.get(id = self.kwargs['pk'])))
         return contexto
     
@@ -189,7 +174,33 @@ class PerfilDetailView(DetailView):
             Comentario.objects.create(texto = comentario, emisor = Perfil.objects.get(user =self.request.user.pk), receptor =Perfil.objects.get(user = self.kwargs['pk']))
         return redirect ('../perfil/'+self.kwargs['pk'])
         
- 
+
+class PerfilUpdateView(LoginRequiredMixin, UpdateView):
+    model = Perfil
+    template_name = 'perfil_update.html'
+    success_url = '/'
+    form_class = ProfileUpdate
+
+    def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+        return super().get(request, *args, **kwargs)
+
+    # def get_context_data(self, **kwargs) -> dict[str, Any]:
+    #    context = super().get_context_data(**kwargs)
+    #    context["form"] = self.form_class(instance=self.get_object())
+    #    return context
+
+    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+        perfil = self.get_object()
+        form = self.form_class(request.POST, request.FILES, instance=perfil)
+        if form.is_valid():
+            form.instance.user = User.objects.get(id=self.request.user.id)
+            producto = form.save()
+            perfil = Perfil.objects.get(user_id=self.request.user.id)
+            print(perfil.biografía)
+            return redirect('../perfil/'+str(self.request.user.id))
+        else:
+            return self.form_invalid(form)
+        
 def logout_view(request):
         logout(request)
         return redirect("/")
@@ -218,8 +229,11 @@ class RegisterUserView(FormView):
                         fecha_nacimiento=form.cleaned_data['fecha_nacimiento'],
                         biografía=form.cleaned_data.get('biografia', ''),
                         foto=form.cleaned_data.get('foto_perfil', None),
+                      
                         localizacion = form.cleaned_data['localizacion']
                     )
+                        
+                print(form.cleaned_data.get('foto_perfil', None))        
                 username = form.cleaned_data['username']
                 password = form.cleaned_data['password1']
                 user = authenticate(username=username, password=password)
@@ -231,36 +245,30 @@ class RegisterUserView(FormView):
                 
 
 class ProductoUpdateView(LoginRequiredMixin, UpdateView):
-    
     model = Producto
     template_name = 'producto_update.html'
     success_url = '/'
     form_class = ProductoForm
-    
+
     def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
         return super().get(request, *args, **kwargs)
-   
+
     # def get_context_data(self, **kwargs) -> dict[str, Any]:
-    #    context ={}
-    #    context["form"] = ProductoForm()
-    #    context["object"] = self.get_object()
+    #    context = super().get_context_data(**kwargs)
+    #    context["form"] = self.form_class(instance=self.get_object())
     #    return context
-   
+
     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
-        if request.method == 'POST':
-            form = ProductoForm(request.POST, request.FILES)
-            producto = Producto.objects.get(id = self.kwargs['pk'])
-            form.instance.imagen = producto.imagen.url
-            
-            print(form)
-            if form.is_valid():
-                form.instance.user_id = Perfil.objects.get(user_id = producto.user_id.user)
-                producto = form.save()
-                categorias = form.cleaned_data['categorias']
-                perfil = Perfil.objects.get(user_id = producto.user_id.user)
-                return redirect('../perfil/'+str(perfil.pk))
-            else:
-                return redirect('register')
+        producto = self.get_object()
+        form = self.form_class(request.POST, request.FILES, instance=producto)
+        print(form)
+        if form.is_valid():
+            form.instance.user_id = Perfil.objects.get(user_id=self.request.user.id)
+            producto = form.save()
+            perfil = Perfil.objects.get(user_id=self.request.user.id)
+            return redirect('../perfil/'+str(self.kwargs['pk']))
+        else:
+            return self.form_invalid(form)
         
         
 class ProductoDeleteView(DeleteView):
@@ -297,7 +305,12 @@ class Compra(View):
             ],
             
             mode="payment",
-            success_url=request.build_absolute_uri('/') + 'success/',
-            cancel_url=request.build_absolute_uri('/') + 'cancel/',
+            success_url=request.build_absolute_uri('/') + 'success/'+self.kwargs['pk'],
+            cancel_url=request.build_absolute_uri('/') + 'producto_detail/'+self.kwargs['pk'],
         )
         return redirect(checkout_session.url, code=303)
+    
+def exito(request,*args, **kwargs):
+    # producto = Producto.objects.get(id = kwargs['pk'])
+    # producto.delete()
+    return render(request,'compra.html',)

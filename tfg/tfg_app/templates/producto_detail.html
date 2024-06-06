@@ -1,130 +1,106 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <title>Title</title>
-        <!-- Required meta tags -->
-        <meta charset="utf-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, shrink-to-fit=no"
-        />
+<head>
+    <title>Title</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-        <!-- Bootstrap CSS v5.2.1 -->
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-            crossorigin="anonymous"
-        /><style>
+    <!-- Bootstrap CSS v5.3.2 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+    <style>
+        .carousel-item img {
+            width: 100%;
+            height: auto;
+        }
+        @media (min-width: 768px) {
             .carousel-item img {
                 width: 400px;
                 height: 600px;
             }
+        }
+    </style>
+</head>
 
-        </style>
-    </head>
-
-    <body>
-            {% include 'header.html'%}
-            {% include 'base.html' %}
-        <main>
-          <div class="row">
-          <div class="col p-4">
-
-            <div id="carouselExampleFade" class="carousel slide carousel-fade">
-              <div class="carousel-inner">
-                <div class="carousel-item active">
-                  <img src="{{producto.imagen.url}}" class="d-block w-100" alt="...">
+<body>
+    {% include 'header.html' %}
+    {% include 'base.html' %}
+    <main>
+        <div class="row">
+            <div class="col-md-6 p-4">
+                <div id="carouselExampleFade" class="carousel slide carousel-fade">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img src="{{producto.imagen.url}}" class="d-block w-100" alt="...">
+                        </div>
+                        {% if producto.imagen2 %}
+                        <div class="carousel-item">
+                            <img src="{{producto.imagen2.url}}" class="d-block w-100" alt="...">
+                        </div>
+                        {% endif %}
+                        {% if producto.imagen3 %}
+                        <div class="carousel-item">
+                            <img src="{{producto.imagen3.url}}" class="d-block w-100" alt="...">
+                        </div>
+                        {% endif %}
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
                 </div>
-                {% if producto.imagen2 %}
-                <div class="carousel-item">
-                  <img src="{{producto.imagen2.url}}" class="d-block w-100" alt="...">
-                </div>
-                {% endif %}
-                {% if producto.imagen3 %}
-                <div class="carousel-item">
-                  <img src="{{producto.imagen3.url}}" class="d-block w-100" alt="...">
-                </div>
-                {% endif %}
-              </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-              </button>
             </div>
-          </div>
-          <div class="col p-4">
-              <h2>{{producto.nombre}}           {{producto.precio}}€</h2>            
-              <div class="row" style="width: 90%;">
-              <a class="border boder-dark border-2" style="width: 90%;"></a>
-              </div>
-            <br>
-            <div style="height: 80%; width:90%; max-height:80%">
-              <p>{{producto.descripcion}}</p>
-              <form>
-                <div class="mb-3">
-                  <input type="checkbox" id="checkbox1" onclick="toggleButton()">
-                  <label for="checkbox1">He leído y acepto los términos y condiciones.</label>
-                  
+            <div class="col-md-6 p-4">
+                <h2>{{producto.nombre}} {{producto.precio}}€</h2>
+                <div class="row mb-3">
+                    <div class="col">
+                        <hr class="border border-dark border-2">
+                    </div>
                 </div>
-
-                <br>
-                <div class="mb-3">
-                    <input type="checkbox" id="checkbox2" onclick="toggleButton()"> Check-box 1
-                    <label for="checkbox2">He leído y acepto la política de privacidad.</label>
-
+                <p>{{producto.descripcion}}</p>
+                <form>
+                    <div class="mb-3">
+                        <input type="checkbox" id="checkbox1" onclick="toggleButton()">
+                        <label for="checkbox1">He leído y acepto los términos y condiciones.</label>
+                    </div>
+                    <div class="mb-3">
+                        <input type="checkbox" id="checkbox2" onclick="toggleButton()">
+                        <label for="checkbox2">He leído y acepto la política de privacidad.</label>
+                    </div>
+                    <button type="button" id="myButton" class="btn btn-primary w-100" disabled><a href="{% url 'compra' pk=producto.pk%}" class="text-white text-decoration-none">COMPRAR</a></button>
+                </form>
+                <div class="row mt-3">
+                    <div class="col">
+                        <hr class="border border-dark border-2">
+                    </div>
                 </div>
-                <br>
-                <button type="button" id="myButton" class="btn btn-primary w-100" disabled><a href="{% url 'compra' pk=producto.pk%}">COMPRAR</a></button>
-            </form>
+                <p>Vendido por: <a href="{% url 'perfil' pk=producto.user_id.user.pk %}">{{producto.user_id.user.username}}</a> <img src="{{producto.user_id.foto.url}}" class="rounded-circle" height="20px"></p>
+                <p>Producto en venta desde: {{producto.create_datetime}}</p>
             </div>
-            <br>
-            <div class="row" style="width: 100%;">
-              <a class="border boder-dark border-2" style="width: 90%;"></a>
-            </div>
-              <br>
-              <p>Vendido por: <a href="{% url 'perfil' pk=producto.user_id.user.pk %}"> {{producto.user_id.user.username}}</a> <img src="{{producto.user_id.foto.url}}" style=" border-radius: 100%" height="20px"
-                
-                
-                
-                ></p>
-              <p>Producto en venta desde : {{producto.create_datetime}}</p>
-
-
-          </div>
         </div>
-        </main>
-        <footer>
-            <!-- place footer here -->
-        </footer>
-        <!-- Bootstrap JavaScript Libraries -->
-        <script
-            src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-            crossorigin="anonymous"
-        ></script>
+    </main>
+    <footer>
+        <!-- place footer here -->
+    </footer>
+    <!-- Bootstrap JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    <script>
+        function toggleButton() {
+            var checkbox1 = document.getElementById("checkbox1");
+            var checkbox2 = document.getElementById("checkbox2");
+            var button = document.getElementById("myButton");
 
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
-            integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
-            crossorigin="anonymous"
-        ></script>
-        <script>
-          function toggleButton() {
-              var checkbox1 = document.getElementById("checkbox1");
-              var checkbox2 = document.getElementById("checkbox2");
-              var button = document.getElementById("myButton");
-  
-              if (checkbox1.checked && checkbox2.checked) {
-                  button.disabled = false;
-              } else {
-                  button.disabled = true;
-              }
-          }
-      </script>
-    </body>
+            if (checkbox1.checked && checkbox2.checked) {
+                button.disabled = false;
+            } else {
+                button.disabled = true;
+            }
+        }
+    </script>
+</body>
 </html>

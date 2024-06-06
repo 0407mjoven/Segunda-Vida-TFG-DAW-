@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Productos</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<style>
+
+</style>
+</head>
+<body>
+    {% include 'header.html'%}
+    {% include 'navbar.html'%}    
+  <!-- Button trigger modal -->
+
+
+<!-- Modal -->
+
+
+          
+  
+
+    <main class="col">
+
+      <h2 style="margin-left: 10%;">Resultados de la búsqeda ({{numero}})</h2>
+      <div class="border border-3 border-dark" style="margin-left: 10%; margin-right: 5%"></div>
+      <br>
+
+
+      <div class="container">
+
+
+        <div class="row">
+            {% if productos %}
+            {% for product in productos %}
+            <div class="col-md-4">
+              <div class="card product-card">
+                  <img src="{{product.imagen.url}}" class="card-img-top product-img" alt="Imagen del Producto 1">
+                  <div class="card-body">
+                      <h5 class="card-title">{{product.nombre}}</h5>
+                      <p class="product-price">{{product.precio}}</p>
+                      <a href="{% url 'product_detail' pk=product.pk%}" class="btn btn-primary">Ver más</a>
+                  </div>
+              </div>
+          </div>
+            {% endfor %}
+            {% else %}
+
+            <h1>¡Ups! No hay productos que concuerden con lo que estás buscando</h1>
+            <h2>Seguro que si sigues mirando encuentas algo que te gusta mas;)</h2>
+            {% endif %}
+          </div> <!-- row end.// -->
+        </main> <!-- col.// -->
+  </div>
+      </div>
+  
+    </div>
+  </section>
+    </main>
+</div>
+
+        <footer>
+            <!-- place footer here -->
+        </footer>

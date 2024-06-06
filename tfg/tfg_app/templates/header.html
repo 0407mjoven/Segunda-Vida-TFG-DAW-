@@ -2,43 +2,50 @@
 {% load static %}
 
 <header>
-    <div class="row p-2 d-flex justify-content-center align-items-center" style="--bs-gutter-x: 0">
-            <div class="col">
+    <div class="container">
+        <div class="row p-2 d-flex justify-content-between align-items-center" style="--bs-gutter-x: 0">
+            <div class="col-12 col-md-4 d-flex justify-content-between justify-content-md-start align-items-center mb-2 mb-md-0">
                 <h1><a href="{% url 'index'%}" style="text-decoration: none; color: black">Segunda vida</a></h1>
+                <div class="d-block d-md-none ms-2">
+                    <a href="{% url 'perfil' pk=request.user.pk %}">
+                        <img style="border-radius: 100%;" src="{{perfil.foto.url}}" width="50px">
+                    </a>
+                </div>
             </div>
-            <div class="col">
-
-                <form action="{% url 'buscar_producto' %}" class="search mx-auto" style="width:80%;">
-                    
-                  <div class="input-group w-100">
-                      <input type="text" class="form-control" placeholder="Buscar Productos" name="keyword">
-                      <div class="input-group-append">
-                        <button class="btn btn-primary" type="submit">
-                            <i class="bi bi-search"></i>
-                        </button>
-                      </div>
+            <div class="col-12 col-md-4 mb-2 mb-md-0">
+                <form action="{% url 'buscar_producto' %}" class="search mx-auto" style="width:100%;">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Buscar Productos" name="keyword">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
                     </div>
                 </form>
-              </div>
-            <div class="col justify-content-right align-items-center">
-                <div class="row d-flex justify-content-right align-items-center">
-                    <div class="col-5">
-                        <a href="{% url 'product_create' %}"><button class="btn btn-outline-primary w-100"> Subir producto</button></a>
+            </div>
+            <div class="col-12 col-md-4 d-flex justify-content-center justify-content-md-end align-items-center">
+                <div class="row w-100 d-flex justify-content-center justify-content-md-end align-items-center">
+                    <div class="col-6 col-md-4 mb-2 mb-md-0">
+                        <a href="{% url 'product_create' %}">
+                            <button class="btn btn-outline-primary w-100">Subir producto</button>
+                        </a>
                     </div>
-                    <div class="col-5">
-                        <a href="{% url 'logout' %}" style="color: rgb(0, 0, 0); text-decoration: none;"><button class="btn btn-outline-primary w-100"><i class="bi bi-box-arrow-left"></i>Cerrar sesión</button></a>
+                    <div class="col-6 col-md-4 mb-2 mb-md-0">
+                        <a href="{% url 'logout' %}" style="color: rgb(0, 0, 0); text-decoration: none;">
+                            <button class="btn btn-outline-primary w-100">
+                                <i class="bi bi-box-arrow-left"></i> Cerrar sesión
+                            </button>
+                        </a>
                     </div>
-                    <div class="col">
-                        <a href="{% url 'perfil' pk=request.user.pk %}" style="float: right;"><img style=" border-radius: 100%" src="{{perfil.foto.url}}" width="50px"></a>
-
-                    </div>
-                    <div class="col p-0">
+                    <div class="d-none d-md-block col-md-2">
+                        <a href="{% url 'perfil' pk=request.user.pk %}" style="float: right;">
+                            <img style="border-radius: 100%;" src="{{perfil.foto.url}}" width="50px">
+                        </a>
                     </div>
                 </div>
             </div>
-
-</div>
-
-    
+        </div>
+    </div>
 </header>
 <div class="border border-3 border-primary"></div>

@@ -1,58 +1,53 @@
-{% load static%}
+{% load static %}
 {% include 'base.html' %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-        <title>Login</title>
+    <title>Login</title>
 </head>
-<body class="d-flex justify-content-center align-items-center bg-primary">
-        <div class="container">
-    
-            <div class="col">
-                <div class="row text-center">
+<body class="d-flex justify-content-center align-items-center bg-primary min-vh-100">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                <div class="text-center text-light mb-4">
                     <h1>Segunda vida</h1>
                 </div>
-                <br>
                 {% if form.errors %}
-                    {{form.errors}}
-                {% endif %}
-                <div class="row" style="margin-left:30%; margin-right:30%">
-        
-                    <div class="card p-4">
-                        <form method="post" action="{% url 'login' %}" id="login-form">
-                            {% csrf_token %}
-                            <h1 class="text-center mb-3">Inicio de sesion</h1>
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Nombre de Usuario</label>
-                                {{ form.username }}
-                            </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Contraseña</label>
-                                {{ form.password }}
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">Login</button>
-                            <input type="hidden" name="next" value="{{ next }}">
-                            <div class="text-center mt-3">
-                                <p>¿No tienes cuenta? <a href="{% url 'register' %}">Registrarse</a></p>
-                            </div>
-                        </form>
+                    <div class="alert alert-danger">
+                        {{ form.errors }}
                     </div>
-    
+                {% endif %}
+                <div class="card p-4">
+                    <form method="post" action="{% url 'login' %}" id="login-form">
+                        {% csrf_token %}
+                        <h1 class="text-center mb-3">Inicio de sesión</h1>
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Nombre de Usuario</label>
+                            {{ form.username }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña</label>
+                            {{ form.password }}
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                        <input type="hidden" name="next" value="{{ next }}">
+                        <div class="text-center mt-3">
+                            <p>¿No tienes cuenta? <a href="{% url 'register' %}">Registrarse</a></p>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-   
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                var inputs = document.querySelectorAll('#login-form input');
-                inputs.forEach(function(input) {
-                    input.classList.add('form-control');
-                });
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var inputs = document.querySelectorAll('#login-form input');
+            inputs.forEach(function(input) {
+                input.classList.add('form-control');
             });
-        </script>
-    
+        });
+    </script>
 </body>
 </html>
