@@ -5,3 +5,4 @@ from .models import *
 
 admin.site.register(Producto)
 admin.site.register(Perfil)
+admin.site.register(Comentario)

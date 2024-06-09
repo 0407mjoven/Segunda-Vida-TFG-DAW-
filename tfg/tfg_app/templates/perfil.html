@@ -31,7 +31,7 @@
                 <div class="row">
                     <div class="col-12 col-md-2 text-center text-md-start">
                         <a>
-                            <img style="border-radius: 50%;" src="{{perfil2.foto.url}}" class="img-fluid" alt="Profile Picture">
+                            <img style="border-radius: 50%; max-width:200px" src="{{perfil2.foto.url}}" class="img-fluid" alt="Profile Picture">
                         </a>
                         <div class="mt-3">
                             <i class="bi bi-geo-alt-fill">{{perfil2.localizacion}}</i>
@@ -78,84 +78,96 @@
              <div class="border border-3 border-dark"></div>
             <br>
             <div class="row">
-            {% for productin in perfil2.productos_asociados %}
-            <div class="col-md-4">
-                <div class="card">
-                    <img src="{{productin.imagen.url}}" class="card-img-top product-img" alt="{{producto.nombre}}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{productin.nombre}}</h5>
-                        <p class="card-text  mb-3"  style="max-height:100px; overflow: hidden; text-overflow:ellipsis">{{productin.descripcion}}</p>
-                        <h4 class="card-text  mb-3">{{productin.precio}}€</h4>
-                        {%  if perfil.user == request.user %}
-                        <div class="row">
-                            <div class="col mb-3">
-                                <a href="{% url 'product_update' pk=productin.pk%}" class="btn btn-primary">Editar Producto</a>
-                            </div>
-                            <div class="col">
-                                <a class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#exampleModal">Eliminar Producto</a>
-
-                            </div>
-                        </div>
-                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                              <div class="modal-content">
-                                <div class="modal-header">
-                                  <h1 class="modal-title fs-5" id="exampleModalLabel">Eliminar Producto
-                                </h1>
-                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                {% if perfil2.productos_asociados %}
+                {% for productin in perfil2.productos_asociados %}
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src="{{ productin.imagen.url }}" class="card-img-top product-img" alt="{{ productin.nombre }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ productin.nombre }}</h5>
+                            <p class="card-text mb-3" style="max-height:100px; overflow: hidden; text-overflow:ellipsis">{{ productin.descripcion }}</p>
+                            <h4 class="card-text mb-3">{{ productin.precio }}€</h4>
+                            {% if perfil.user == request.user %}
+                            <div class="row">
+                                <div class="col mb-3">
+                                    <a href="{% url 'product_update' pk=productin.pk %}" class="btn btn-primary">Editar Producto</a>
                                 </div>
-                                <div class="modal-body">
-                          
-                                    <p>¿Estás seguro de que deseas eliminar el producto "{{ productin.nombre }}"?</p>
-                                    <form method="post" action="{% url 'product_delete' productin.pk %}">
-                                        {% csrf_token %}
-                                        <div class="mb-3">
-                                            <button class="btn btn-block btn-primary" type="submit">Eliminar</button> 
-
+                                <div class="col">
+                                    <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deleteModal{{ productin.pk }}">Eliminar Producto</a>
+                                </div>
+                            </div>
+        
+                            <!-- Modal -->
+                            <div class="modal fade" id="deleteModal{{ productin.pk }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ productin.pk }}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteModalLabel{{ productin.pk }}">Eliminar Producto</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
-                                        <div class="mb-3">
-                                            <button class="btn btn-block btn-primary"><a href="{% url 'perfil' pk=productin.user_id.user %}" style="text-decoration: none; color: white">Cancelar</a></button>  <!-- Cambia esto a la URL de la lista de productos o a donde quieras redirigir al cancelar -->
-
+                                        <div class="modal-body">
+                                            <p>¿Estás seguro de que deseas eliminar el producto "{{ productin.nombre }}"?</p>
+                                            <form method="post" action="{% url 'product_delete' productin.pk %}">
+                                                {% csrf_token %}
+                                                <div class="mb-3">
+                                                    <button class="btn btn-block btn-primary" type="submit">Eliminar</button>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <button class="btn btn-block btn-primary">
+                                                        <a href="{% url 'perfil' pk=productin.user_id.user %}" style="text-decoration: none; color: white">Cancelar</a>
+                                                    </button>
+                                                </div>
+                                            </form>
                                         </div>
-                                    </form>
-
-                                        </div>
-
                                     </div>
-
-                                  </div>
-                              
-                                    </form>      
-                                  </div>
-                        {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
                     </div>
-                </div>  
-            </div>
-        {% endfor %}
+                </div>
+                {% endfor %}
+        </div>
+        {% else %}
+
+        <h1>Este usuario no ha subido ningún producto o los ha vendido todos</h1>
+
+        {% endif %}
         <div style="margin-bottom: 2%;"></div>
         <h2>Comentarios ({{comentarios.count}})</h2>
         <div class="border border-3 border-dark"></div>
 
-        {%  if perfil.user != request.user %}
-        <form method="post">
+        {%  if perfil2.user != request.user %}
+        <form method='POST' action="{% url 'comentar' pk=perfil2.pk %}" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form.as_p }}
+            <div class="mb-3">
+                <label for="comentario" class="form-label"></label>
+                {{form.comentario}}
+            </div>
             <button type="submit">Enviar</button>
         </form>
         {% endif %}
         <div class="container ">
-            {% for comentario in comentarios %}
-            <div class="comment-box">
-                <div class="comment-header">
-                  <span class="comment-author">{{comentario.emisor}}</span>
-                  <span class="comment-time text-muted">{{comentario.create_datetime}}</span>
+        {% if comentarios%}
+        {% for comentario in comentarios %}
+        <div class="card mt-2 mb-2">
+            <div class="card-header">
+                <div class="d-flex justify-content-between">
+                    <span class="font-weight-bold">{{comentario.emisor}}</span>
+                    <span class="text-muted">{{comentario.create_datetime}}</span>
                 </div>
-                <div class="comment-text">
-                    {{comentario.texto}}
-                </div>
-              </div>
-            
-                {% endfor %}
+            </div>
+            <div class="card-body">
+                <p class="card-text">{{comentario.texto}}</p>
+            </div>
+        </div>
+        
+            {% endfor %}
+        {% else %}
+
+        <h1>A este usuario no le han dejado ningún comentario. Sé tu el primero!</h1>
+
+        {% endif %}
         </div>
         
        

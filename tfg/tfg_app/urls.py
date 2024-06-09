@@ -16,7 +16,9 @@ urlpatterns = [
     path('producto/<int:pk>/eliminar/', ProductoDeleteView.as_view(), name='product_delete'),
     path('compra/<pk>', Compra.as_view(), name='compra'),
     path('seguir/<pk>',seguir, name='seguir'),
-    path('success/',exito, name='success'),
+    path('success/<pk>',exito, name='success'),
+    path('comentar/<pk>',comentar, name='comentar'),
+    
     
     
 

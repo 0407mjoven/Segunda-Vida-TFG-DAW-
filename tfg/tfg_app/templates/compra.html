@@ -1,40 +1,39 @@
+{% include 'base.html'%}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Página de Pago</title>
     <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+         
+        }
+        .content {
+            text-align: center;
+        }
+    </style>
 </head>
-<body>
-    <button id="checkout-button">Pagar</button>
+<body class="bg-primary">
+    <div class="container-fluid d-flex justify-content-center align-items-center ">
+        <div class="content">
+            <h1>¡Gracias por comprar en Segunda vida!</h1>
+            <h2>Te esperamos de vuelta muy pronto</h2>
+        </div>
+    </div>
 
-    <script type="text/javascript">
-        var stripe = Stripe('{{ stripe_publishable_key }}');
+    <script>
+        function redirigir() {
+            console.log("Redirigiendo a localhost...");
+            window.location.href = "http://127.0.0.1:8000";
+        }
 
-        var checkoutButton = document.getElementById('checkout-button');
-
-        checkoutButton.addEventListener('click', function () {
-            fetch("/create-checkout-session/", {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}',
-                },
-            })
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (session) {
-                return stripe.redirectToCheckout({ sessionId: session.id });
-            })
-            .then(function (result) {
-                if (result.error) {
-                    alert(result.error.message);
-                }
-            })
-            .catch(function (error) {
-                console.error("Error:", error);
-            });
-        });
+        // Esperar 5 segundos (5000 milisegundos) antes de redirigir
+        setTimeout(redirigir, 5000);
     </script>
 </body>
 </html>

@@ -75,6 +75,7 @@
 
 
         <div class="row">
+          {% if productos %}
             {% for product in productos %}
             <div class="col-md-4">
               <div class="card product-card">
@@ -85,8 +86,13 @@
                       <a href="{% url 'product_detail' pk=product.pk%}" class="btn btn-primary">Ver más</a>
                   </div>
               </div>
-          </div>
+            </div>
             {% endfor %}
+            {% else %}
+
+            <h1>Esta categoría no cuenta con productos actualmente. ¡Súbelos tu!</h1>
+            
+            {% endif %}
           </div> <!-- row end.// -->
   
   

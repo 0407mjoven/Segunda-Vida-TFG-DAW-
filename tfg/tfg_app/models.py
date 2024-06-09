@@ -18,9 +18,12 @@ class Perfil(models.Model):
     
     def seguidos(self):
         return self.seguido.all().count()
+    
     def productos_asociados(self):
         return self.productos.all()
     
+    def __str__(self) -> str:
+        return self.username
 class Categoria(models.Model):
     
     id = models.IntegerField(primary_key=True)

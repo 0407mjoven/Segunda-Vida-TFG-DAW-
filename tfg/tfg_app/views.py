@@ -162,17 +162,17 @@ class PerfilDetailView(DetailView):
         contexto['perfil'] = Perfil.objects.get(user_id = self.request.user.id)
         contexto['perfil2'] = Perfil.objects.get(user_id = self.kwargs['pk'])
         contexto['form'] = CommentForm()
-        contexto['comentarios'] = Comentario.objects.filter(receptor = contexto['perfil'] )
+        contexto['comentarios'] = Comentario.objects.filter(receptor = contexto['perfil2'] )
         contexto['sigue'] = Seguidor.objects.filter(seguidor= Perfil.objects.get(user =self.request.user.pk),seguido=Perfil.objects.get(user = User.objects.get(id = self.kwargs['pk'])))
         return contexto
     
     
-    def post(self, request, *args, **kwargs):
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comentario = form.cleaned_data['comentario']
-            Comentario.objects.create(texto = comentario, emisor = Perfil.objects.get(user =self.request.user.pk), receptor =Perfil.objects.get(user = self.kwargs['pk']))
-        return redirect ('../perfil/'+self.kwargs['pk'])
+def comentar(request, *args, **kwargs):
+    form = CommentForm(request.POST)
+    if form.is_valid():
+        comentario = form.cleaned_data['comentario']
+        Comentario.objects.create(texto = comentario, emisor = Perfil.objects.get(user =request.user.pk), receptor =Perfil.objects.get(pk = kwargs['pk']))
+    return redirect ('../perfil/'+kwargs['pk'])
         
 
 class PerfilUpdateView(LoginRequiredMixin, UpdateView):
@@ -220,12 +220,14 @@ class RegisterUserView(FormView):
                         user=user,
                         fecha_nacimiento=form.cleaned_data['fecha_nacimiento'],
                         biografía=form.cleaned_data.get('biografia', ''),
+                        username = form.cleaned_data['username'],
                     
                         localizacion = form.cleaned_data['localizacion']
                     )
                 else:
                         Perfil.objects.create(
                         user=user,
+                        username = form.cleaned_data['username'],
                         fecha_nacimiento=form.cleaned_data['fecha_nacimiento'],
                         biografía=form.cleaned_data.get('biografia', ''),
                         foto=form.cleaned_data.get('foto_perfil', None),
@@ -266,7 +268,7 @@ class ProductoUpdateView(LoginRequiredMixin, UpdateView):
             form.instance.user_id = Perfil.objects.get(user_id=self.request.user.id)
             producto = form.save()
             perfil = Perfil.objects.get(user_id=self.request.user.id)
-            return redirect('../perfil/'+str(self.kwargs['pk']))
+            return redirect('../perfil/'+str(self.request.user.id))
         else:
             return self.form_invalid(form)
         
@@ -311,6 +313,6 @@ class Compra(View):
         return redirect(checkout_session.url, code=303)
     
 def exito(request,*args, **kwargs):
-    # producto = Producto.objects.get(id = kwargs['pk'])
-    # producto.delete()
+    producto = Producto.objects.get(id = kwargs['pk'])
+    producto.delete()
     return render(request,'compra.html',)
